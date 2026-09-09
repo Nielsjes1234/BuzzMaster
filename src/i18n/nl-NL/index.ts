@@ -6,9 +6,10 @@ import leaderboard from './leaderboard';
 import online from './online';
 import toolbar from './toolbar';
 import updater from './updater';
+import remote from './remote';
 
 export default {
-  app_name: 'Buzz Master',
+  app_name: 'BuzzMaster',
   action: {
     start: 'Start',
     devices: 'Apparaten',
@@ -30,4 +31,5 @@ export default {
   online,
   toolbar,
   updater,
+  remote,
 };

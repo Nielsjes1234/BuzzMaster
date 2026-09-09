@@ -1,4 +1,4 @@
-import type { AppAPI, WindowAPI, CastAPI } from '@/../common';
+import type { AppAPI, CastAPI, WindowAPI, RemoteAPI } from '@/../common';
 
 export {};
 
@@ -7,5 +7,6 @@ declare global {
     windowAPI: WindowAPI;
     appAPI: AppAPI;
     castAPI: CastAPI;
+    remoteAPI: RemoteAPI;
   }
 }

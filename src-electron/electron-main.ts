@@ -2,6 +2,7 @@ import { app, BrowserWindow } from 'electron';
 import initWindowApiHandler from '@/../src-electron/windowAPI/main';
 import initAppApiHandler from '@/../src-electron/appAPI/main';
 import initCastApiHandler from '@/../src-electron/castAPI/main';
+import initRemoteApiHandler from '@/../src-electron/remoteAPI/main';
 import path from 'path';
 import os from 'os';
 import log from 'electron-log';
@@ -161,6 +162,7 @@ app
     initAppApiHandler();
     initWindowApiHandler();
     initCastApiHandler(createCastWindow);
+    initRemoteApiHandler();
     await createWindow();
   })
   .catch((reason: unknown) => {

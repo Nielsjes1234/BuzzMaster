@@ -2,6 +2,7 @@ import { acceptHMRUpdate, defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import { useBuzzer } from '@/plugins/buzzer';
 import type { LeaderboardEntry } from '@/../common/gameState/LeaderboardState';
+import type { RemoteAction } from '@/../common/RemoteAPI';
 
 export type Leaderboard = LeaderboardEntry[];
 
@@ -44,6 +45,30 @@ export const useLeaderboardStore = defineStore('leaderboard', () => {
   const resetPoints = () => {
     controllerPoints.value = {};
   };
+
+  // Handle incoming remote actions
+  if (typeof window !== 'undefined') {
+    window.addEventListener('remote-action', ((
+      e: CustomEvent<RemoteAction>,
+    ) => {
+      const { action, payload } = e.detail;
+      if (action === 'leaderboardStore:addPoints') {
+        const { controllerId, points } = payload as {
+          controllerId: string;
+          points: number;
+        };
+        addPoints(controllerId, points);
+      } else if (action === 'leaderboardStore:updatePoints') {
+        const { controllerId, points } = payload as {
+          controllerId: string;
+          points: number;
+        };
+        updatePoints(controllerId, points);
+      } else if (action === 'leaderboardStore:resetPoints') {
+        resetPoints();
+      }
+    }) as EventListener);
+  }
 
   return {
     leaderboard,

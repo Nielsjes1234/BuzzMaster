@@ -209,12 +209,30 @@ const { gameState, transition, onStateEntry, onStateExit } =
 onBeforeMount(async () => {
   await buzzer.reset();
   buzzer.on('press', listener);
+  window.addEventListener('remote-action', onRemoteAction as EventListener);
 });
 
 onUnmounted(async () => {
   buzzer.removeListener('press', listener);
+  window.removeEventListener('remote-action', onRemoteAction as EventListener);
   await buzzer.reset();
 });
+
+function onRemoteAction(e: CustomEvent) {
+  const { action } = e.detail;
+  if (action === 'quiz:start' && gameState.value.name === 'preparing') start();
+  if (action === 'quiz:cancel' && gameState.value.name === 'running') restart();
+  if (action === 'quiz:restart' && gameState.value.name === 'completed')
+    restart();
+  if (action === 'quiz:quickPlay' && gameState.value.name === 'completed')
+    quickPlay();
+  if (
+    action === 'quiz:nextRound' &&
+    gameState.value.name === 'completed' &&
+    !disableNextRoundButton.value
+  )
+    nextRound();
+}
 
 const tick = transition('running', (state, time: number) => {
   if (time <= 0) {

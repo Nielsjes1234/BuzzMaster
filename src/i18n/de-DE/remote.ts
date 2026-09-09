@@ -1,0 +1,35 @@
+export default {
+  status: {
+    connected: 'Verbunden',
+    offline: 'Offline',
+    waiting: 'Warten auf Verbindung...',
+  },
+  menu: {
+    noGame: 'Kein aktives Spiel',
+    selectGame: 'Wähle einen Spielmodus, um zu starten',
+    activeMode: '{game} Modus',
+    active: 'Aktiv',
+  },
+  action: {
+    quiz: 'Quiz',
+    buzzer: 'Buzzer',
+    stopwatch: 'Stoppuhr',
+    simon: 'Simon',
+    toggleLeaderboard: 'Bestenliste umschalten',
+    startQuiz: 'Quiz starten',
+    cancelQuiz: 'Quiz abbrechen',
+    quickPlay: 'Schnelles Spiel',
+    nextRound: 'Nächste Runde',
+    restart: 'Neustart',
+    revealAnswer: 'Antwort aufdecken',
+    nextQuestion: 'Nächste Frage',
+    stopGame: 'Spiel beenden',
+    startBuzzer: 'Buzzer starten',
+    resetBuzzers: 'Buzzer zurücksetzen',
+  },
+  setup: {
+    title: 'Fernbedienung einrichten',
+    description: 'Scanne diesen QR-Code mit deinem Handy, um es als Fernbedienung zu verwenden, oder öffne die folgende URL.',
+    close: 'Schließen',
+  },
+};

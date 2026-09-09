@@ -1,0 +1,35 @@
+export default {
+  status: {
+    connected: 'Verbonden',
+    offline: 'Offline',
+    waiting: 'Wachten op verbinding...',
+  },
+  menu: {
+    noGame: 'Geen actief spel',
+    selectGame: 'Kies een spelmodus om te starten',
+    activeMode: '{game} Modus',
+    active: 'Actief',
+  },
+  action: {
+    quiz: 'Quiz',
+    buzzer: 'Buzzer',
+    stopwatch: 'Stopwatch',
+    simon: 'Simon',
+    toggleLeaderboard: 'Scorebord tonen/verbergen',
+    startQuiz: 'Start Quiz',
+    cancelQuiz: 'Annuleer Quiz',
+    quickPlay: 'Snel Spelen',
+    nextRound: 'Volgende Ronde',
+    restart: 'Herstarten',
+    revealAnswer: 'Antwoord Tonen',
+    nextQuestion: 'Volgende Vraag',
+    stopGame: 'Stop Spel',
+    startBuzzer: 'Start Buzzer',
+    resetBuzzers: 'Reset Buzzers',
+  },
+  setup: {
+    title: 'Remote Control Instellen',
+    description: 'Scan deze QR code met je telefoon om deze als afstandsbediening te gebruiken, of ga naar de onderstaande URL.',
+    close: 'Sluiten',
+  },
+};

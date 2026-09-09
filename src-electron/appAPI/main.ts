@@ -10,7 +10,10 @@ export default () => {
     },
   });
 
-  ipcMain.handle('app:getVersion', () => app.getVersion());
+  ipcMain.handle(
+    'app:getVersion',
+    () => process.env.npm_package_version || app.getVersion(),
+  );
   ipcMain.handle('app:getLocale', () =>
     store.get('locale', app.getSystemLocale()),
   );

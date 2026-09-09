@@ -1,0 +1,35 @@
+export default {
+  status: {
+    connected: 'Conectado',
+    offline: 'Desconectado',
+    waiting: 'Esperando conexión...',
+  },
+  menu: {
+    noGame: 'Ningún juego activo',
+    selectGame: 'Selecciona un modo de juego para empezar',
+    activeMode: 'Modo {game}',
+    active: 'Activo',
+  },
+  action: {
+    quiz: 'Cuestionario',
+    buzzer: 'Zumbador',
+    stopwatch: 'Cronómetro',
+    simon: 'Simón',
+    toggleLeaderboard: 'Alternar tabla de clasificación',
+    startQuiz: 'Iniciar Cuestionario',
+    cancelQuiz: 'Cancelar Cuestionario',
+    quickPlay: 'Juego Rápido',
+    nextRound: 'Siguiente Ronda',
+    restart: 'Reiniciar',
+    revealAnswer: 'Revelar Respuesta',
+    nextQuestion: 'Siguiente Pregunta',
+    stopGame: 'Detener Juego',
+    startBuzzer: 'Iniciar Zumbador',
+    resetBuzzers: 'Restablecer Zumbadores',
+  },
+  setup: {
+    title: 'Configuración de Control Remoto',
+    description: 'Escanea este código QR con tu teléfono para usarlo como control remoto, o navega a la URL a continuación.',
+    close: 'Cerrar',
+  },
+};

@@ -1,0 +1,35 @@
+export default {
+  status: {
+    connected: 'Connected',
+    offline: 'Offline',
+    waiting: 'Waiting for connection...',
+  },
+  menu: {
+    noGame: 'No Active Game',
+    selectGame: 'Select a game mode to start',
+    activeMode: '{game} Mode',
+    active: 'Active',
+  },
+  action: {
+    quiz: 'Quiz',
+    buzzer: 'Buzzer',
+    stopwatch: 'Stopwatch',
+    simon: 'Simon',
+    toggleLeaderboard: 'Toggle Leaderboard',
+    startQuiz: 'Start Quiz',
+    cancelQuiz: 'Cancel Quiz',
+    quickPlay: 'Quick Play',
+    nextRound: 'Next Round',
+    restart: 'Restart',
+    revealAnswer: 'Reveal Answer',
+    nextQuestion: 'Next Question',
+    stopGame: 'Stop Game',
+    startBuzzer: 'Start Buzzer',
+    resetBuzzers: 'Reset Buzzers',
+  },
+  setup: {
+    title: 'Remote Control Setup',
+    description: 'Scan this QR code with your phone to use it as a remote control, or navigate to the URL below.',
+    close: 'Close',
+  },
+};

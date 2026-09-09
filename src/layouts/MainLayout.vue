@@ -62,6 +62,21 @@
             </q-tooltip>
           </q-btn>
 
+          <q-btn
+            v-if="quasar.platform.is.electron"
+            aria-label="Remote Control Setup"
+            key="remote"
+            dense
+            flat
+            rounded
+            size="sm"
+            class="settings-button bg-primary"
+            icon="phone_iphone"
+            @click="openRemoteControlSetup"
+          >
+            <q-tooltip> Remote Control Setup </q-tooltip>
+          </q-btn>
+
           <!-- Settings -->
           <div
             v-if="expandSettings"
@@ -335,6 +350,9 @@ import type { GameSettings } from '@/../common/gameSettings';
 import AppUpdateBtn from '@/components/layout/AppUpdateBtn.vue';
 import { useUpdaterStore } from '@/stores/updater-store';
 import OnlineDialog from '@/components/layout/OnlineDialog.vue';
+import RemoteControlSetupDialog from '@/components/RemoteControlSetupDialog.vue';
+import type { RemoteAction } from '@/../common/RemoteAPI';
+import { useRemoteStore } from '@/stores/remote-store';
 
 const router = useRouter();
 const route = useRoute();
@@ -344,6 +362,7 @@ const { buzzer, controllers } = useBuzzer();
 const gameStore = useGameStore();
 const gameSettingsStore = useGameSettingsStore();
 const castWindowStore = useCastWindowStore();
+const remoteStore = useRemoteStore();
 
 useBatterySavingStore();
 useUpdaterStore();
@@ -447,15 +466,26 @@ function showBatterySavingDialog() {
   });
 }
 
+function openRemoteControlSetup() {
+  quasar.dialog({
+    component: RemoteControlSetupDialog,
+  });
+}
+
 function openDevTools() {
   window.windowAPI.openDevTools();
 }
 
 onMounted(() => {
   window.addEventListener('keydown', keyDownListener);
+  window.addEventListener(
+    'remote-action',
+    remoteActionListener as EventListener,
+  );
 
   if (quasar.platform.is.electron) {
     castWindowStore.initialize();
+    remoteStore.connectToRemoteServer();
 
     // Send the initial state of the game store for the cast window
     sendGameState(gameStore.state);
@@ -481,7 +511,19 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('keydown', keyDownListener);
+  window.removeEventListener(
+    'remote-action',
+    remoteActionListener as EventListener,
+  );
 });
+
+function remoteActionListener(e: CustomEvent<RemoteAction>) {
+  if (!quasar.platform.is.electron) return;
+  const { action, payload } = e.detail;
+  if (action === 'router:push' && typeof payload === 'string') {
+    void router.push(payload);
+  }
+}
 
 function keyDownListener(event: KeyboardEvent) {
   const { key, altKey } = event;
@@ -540,7 +582,13 @@ function sendControllerNames(controllers: Record<string, string>) {
 }
 
 if (quasar.platform.is.electron) {
-  watch(locale, (value) => window.castAPI.updateLocale(toRaw(value)));
+  watch(locale, (value) => {
+    const rawValue = toRaw(value);
+    window.castAPI.updateLocale(rawValue);
+    if (typeof window.remoteAPI !== 'undefined') {
+      window.remoteAPI.updateLocale(rawValue);
+    }
+  });
   watch(() => gameStore.state, sendGameState);
   // Deep, as settings are also changed in place, e.g. by the result view toggle
   watch(() => gameSettingsStore.gameSettings, sendGameSettings, { deep: true });
@@ -548,11 +596,19 @@ if (quasar.platform.is.electron) {
 }
 
 function sendGameState(state: GameState | undefined) {
-  window.castAPI.updateGameState(toValue(state));
+  const value = toValue(state);
+  window.castAPI.updateGameState(value);
+  if (typeof window.remoteAPI !== 'undefined') {
+    window.remoteAPI.updateGameState(value);
+  }
 }
 
 function sendGameSettings(settings: GameSettings) {
-  window.castAPI.updateGameSettings(toValue(settings));
+  const value = toValue(settings);
+  window.castAPI.updateGameSettings(value);
+  if (typeof window.remoteAPI !== 'undefined') {
+    window.remoteAPI.updateGameSettings(value);
+  }
 }
 
 function toValue<T>(value: T): T {

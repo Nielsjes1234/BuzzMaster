@@ -130,6 +130,10 @@ const routes: RouteRecordRaw[] = [
       },
     ],
   },
+  {
+    path: '/remote',
+    component: () => import('@/pages/RemoteIndexPage.vue'),
+  },
 
   // Always leave this as last one,
   // but you can also remove it

@@ -6,9 +6,10 @@ import cast from './cast';
 import updater from './updater';
 import toolbar from './toolbar';
 import online from './online';
+import remote from './remote';
 
 export default {
-  app_name: 'Buzz Master',
+  app_name: 'BuzzMaster',
 
   action: {
     start: 'Empezar',
@@ -34,4 +35,5 @@ export default {
   toolbar,
   updater,
   online,
+  remote,
 };

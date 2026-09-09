@@ -205,14 +205,26 @@ const audio = createAudio('sounds/buzzer.mp3');
 onBeforeMount(async () => {
   await buzzer.reset();
   buzzer.on('press', listener);
-
   audio.load();
+  window.addEventListener('remote-action', onRemoteAction as EventListener);
 });
 
 onUnmounted(async () => {
   buzzer.removeListener('press', listener);
+  window.removeEventListener('remote-action', onRemoteAction as EventListener);
   await buzzer.reset();
 });
+
+function onRemoteAction(e: CustomEvent) {
+  const { action } = e.detail;
+  if (action === 'buzzer:start' && gameState.value.name === 'preparing')
+    start();
+  if (
+    action === 'buzzer:restart' &&
+    ['running', 'answering', 'answered'].includes(gameState.value.name)
+  )
+    restart();
+}
 
 const disableContinue = computed<boolean>(() => {
   if (gameState.value.name === 'answered' && gameState.value.correct) {
