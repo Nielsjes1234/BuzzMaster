@@ -122,7 +122,7 @@
             @click="start()"
           />
           <q-btn
-            :label="t('gameMode.quiz.action.settings')"
+            :label="t('gameMode.viewingRate.action.settings')"
             outline
             rounded
             @click="openSettings()"
@@ -205,7 +205,7 @@ const gameSettingsStore = useGameSettingsStore();
 const { viewingRateSettings } = storeToRefs(gameSettingsStore);
 const { controllers, buzzer } = useBuzzer();
 const { time, stopTimer, startTimer } = useTimer({
-  updateRate: 100,
+  updateRate: 20,
   direction: 'up',
 });
 const { gameState, transition, onStateEntry, onStateExit } =

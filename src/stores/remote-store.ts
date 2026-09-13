@@ -23,6 +23,7 @@ export const useRemoteStore = defineStore('remoteStore', () => {
 
   const socket = ref<Socket | null>(null);
   const isConnected = ref(false);
+  const connectionError = ref<string | null>(null);
 
   const gameState = ref<GameState | undefined>(undefined);
   const gameSettings = ref<GameSettings | undefined>(undefined);
@@ -33,7 +34,9 @@ export const useRemoteStore = defineStore('remoteStore', () => {
    * Host: Sets up IPC listeners.
    * Remote: Connects to Socket.IO.
    */
-  function connectToRemoteServer() {
+  function connectToRemoteServer(pin?: string) {
+    connectionError.value = null;
+
     if (isHost) {
       // Host UI doesn't need to connect via socket, it communicates via window.remoteAPI directly
       // But it can listen to remote actions from the main process
@@ -51,10 +54,18 @@ export const useRemoteStore = defineStore('remoteStore', () => {
 
     // Remote UI connects to the Socket.IO server (which is served by Express on port 3000)
     // Since the Remote UI is hosted on port 3000 (proxied), we can just connect to '/'
-    const socketInstance = io();
+    const socketInstance = io({
+      auth: { pin },
+    });
 
     socketInstance.on('connect', () => {
       isConnected.value = true;
+      connectionError.value = null;
+    });
+
+    socketInstance.on('connect_error', (err: Error) => {
+      connectionError.value = err.message;
+      isConnected.value = false;
     });
 
     socketInstance.on('disconnect', () => {
@@ -96,6 +107,7 @@ export const useRemoteStore = defineStore('remoteStore', () => {
     connectToRemoteServer,
     sendRemoteAction,
     isConnected,
+    connectionError,
     gameState,
     gameSettings,
     locale,

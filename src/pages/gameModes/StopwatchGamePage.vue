@@ -109,7 +109,7 @@
             @click="start()"
           />
           <q-btn
-            :label="t('gameMode.quiz.action.settings')"
+            :label="t('gameMode.stopwatch.action.settings')"
             outline
             rounded
             @click="openSettings"
@@ -226,12 +226,12 @@ import { storeToRefs } from 'pinia';
 
 const { t } = useI18n();
 const quasar = useQuasar();
-const quizSettingsStore = useGameSettingsStore();
-const { stopwatchSettings } = storeToRefs(quizSettingsStore);
+const gameSettingsStore = useGameSettingsStore();
+const { stopwatchSettings } = storeToRefs(gameSettingsStore);
 const { controllers, buzzer } = useBuzzer();
 const { createAudio, cloneAudio } = useAudio();
 const { time, stopTimer, startTimer, exactTime } = useTimer({
-  updateRate: 100,
+  updateRate: 33,
 });
 const { gameState, transition, createEvent, onStateEntry, onStateExit } =
   useGameState<StopwatchState>({
@@ -246,12 +246,35 @@ onBeforeMount(async () => {
   buzzer.on('press', listener);
 
   audio.load();
+  window.addEventListener('remote-action', onRemoteAction as EventListener);
 });
 
 onUnmounted(async () => {
   buzzer.removeListener('press', listener);
+  window.removeEventListener('remote-action', onRemoteAction as EventListener);
   await buzzer.reset();
 });
+
+function onRemoteAction(e: CustomEvent) {
+  const { action } = e.detail;
+  if (action === 'stopwatch:start' && gameState.value.name === 'preparing')
+    start();
+  if (action === 'stopwatch:pause' && gameState.value.name === 'running')
+    pause();
+  if (action === 'stopwatch:resume' && gameState.value.name === 'paused')
+    resume();
+  if (action === 'stopwatch:stop' && gameState.value.name === 'paused')
+    stop();
+  if (
+    action === 'stopwatch:cancel' &&
+    ['running', 'paused'].includes(gameState.value.name)
+  )
+    restart();
+  if (action === 'stopwatch:quickPlay' && gameState.value.name === 'completed')
+    quickPlay();
+  if (action === 'stopwatch:reset' && gameState.value.name === 'completed')
+    restart();
+}
 
 const tick = transition('running', (state, time: number) => {
   return {

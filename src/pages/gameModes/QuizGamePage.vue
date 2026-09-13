@@ -197,7 +197,7 @@ const quizSettingsStore = useGameSettingsStore();
 const { quizSettings } = storeToRefs(quizSettingsStore);
 const { controllers, buzzer } = useBuzzer();
 const { time, stopTimer, startTimer, exactTime } = useTimer({
-  updateRate: 100,
+  updateRate: 20,
   direction: 'down',
 });
 const { gameState, transition, onStateEntry, onStateExit } =

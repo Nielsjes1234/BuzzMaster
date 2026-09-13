@@ -11,6 +11,7 @@ class StateTransitionError extends Error {
 
 export const useGameStore = defineStore('game-store', () => {
   const state = ref<GameState>();
+  let lastSentState: string | undefined = undefined;
 
   function transition(gameState: GameState) {
     if (state.value !== undefined && state.value?.game !== gameState.game) {
@@ -30,8 +31,19 @@ export const useGameStore = defineStore('game-store', () => {
       typeof window.remoteAPI !== 'undefined' &&
       window.remoteAPI
     ) {
-      // Strip Vue proxies before sending over IPC to avoid serialization errors
-      window.remoteAPI.updateGameState(JSON.parse(JSON.stringify(state.value)));
+      // Strip high-frequency fields (time) before sending over IPC 
+      // to avoid IPC flooding. We use JSON.stringify for a very fast 
+      // deep equality check and serialization, avoiding lodash overhead.
+      // Note: We use the raw incoming `gameState` here rather than `state.value`
+      // to avoid triggering heavy Vue proxy tracking 60 times a second.
+      const strippedState = { ...gameState } as Record<string, unknown>;
+      delete strippedState.time;
+      const serialized = JSON.stringify(strippedState);
+      
+      if (serialized !== lastSentState) {
+        lastSentState = serialized;
+        window.remoteAPI.updateGameState(JSON.parse(serialized));
+      }
     }
   }
 
@@ -41,8 +53,10 @@ export const useGameStore = defineStore('game-store', () => {
     if (
       typeof window !== 'undefined' &&
       typeof window.remoteAPI !== 'undefined' &&
-      window.remoteAPI
+      window.remoteAPI &&
+      lastSentState !== undefined
     ) {
+      lastSentState = undefined;
       window.remoteAPI.updateGameState(undefined);
     }
   }

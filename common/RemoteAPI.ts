@@ -5,6 +5,7 @@ export interface RemoteServerInfo {
   ip: string;
   port: number;
   url: string;
+  pin: string;
 }
 
 export type RemoteAPI = RemoteSenderAPI & RemoteReceiverAPI & RemoteServerAPI;

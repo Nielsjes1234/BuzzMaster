@@ -21,6 +21,7 @@ export interface BuzzerAnsweringState extends BuzzerStateBase {
   name: 'answering';
   pressedControllers: string[];
   controller: string;
+  controllerName: string;
   time: number;
 }
 
@@ -28,6 +29,7 @@ export interface BuzzerAnsweredState extends BuzzerStateBase {
   name: 'answered';
   pressedControllers: string[];
   controller: string;
+  controllerName: string;
   correct: boolean;
   points: number;
 }

@@ -10,6 +10,7 @@ export default {
     resume: 'Hervatten',
     reset: 'Reset',
     start: 'Start',
+    settings: 'Instellingen',
   },
   settings: {
     title: 'Instellingen',

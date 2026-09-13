@@ -52,7 +52,7 @@ export default {
         label: 'Modo',
         option: {
           normal: 'Normal',
-          survey: 'Supervivencia',
+          survey: 'Encuesta',
           elimination: 'Eliminación',
         },
       },

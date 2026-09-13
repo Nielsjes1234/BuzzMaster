@@ -5,7 +5,7 @@
     :color
     :thickness
     show-value
-    :animation-speed="10"
+    :animation-speed="50"
     class="circle-timer"
   >
     <slot />

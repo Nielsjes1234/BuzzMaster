@@ -51,7 +51,7 @@ export default {
       mode: {
         label: 'Modus',
         option: {
-          normal: 'Quiz',
+          normal: 'Normal',
           survey: 'Umfrage',
           elimination: 'Ausscheiden',
         },

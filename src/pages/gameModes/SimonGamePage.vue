@@ -318,14 +318,31 @@ let audioCtx: AudioContext | null = null;
 onBeforeMount(async () => {
   await buzzer.reset();
   buzzer.on('press', onPress);
+  window.addEventListener('remote-action', onRemoteAction as EventListener);
 });
 
 onUnmounted(async () => {
   buzzer.removeListener('press', onPress);
+  window.removeEventListener('remote-action', onRemoteAction as EventListener);
   await buzzer.reset();
   void audioCtx?.close();
   audioCtx = null;
 });
+
+function onRemoteAction(e: CustomEvent) {
+  const { action } = e.detail;
+  if (action === 'simon:start' && gameState.value.name === 'preparing')
+    start();
+  if (action === 'simon:nextRound' && gameState.value.name === 'roundOver')
+    nextRound();
+  if (
+    action === 'simon:restart' &&
+    ['showing', 'input', 'roundOver', 'gameOver'].includes(
+      gameState.value.name,
+    )
+  )
+    restart();
+}
 
 const randomSimonButton = (): BuzzerButton => {
   const i = Math.floor(Math.random() * SIMON_BUTTONS.length);

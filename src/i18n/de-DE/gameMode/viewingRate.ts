@@ -12,6 +12,7 @@ export default {
     resume: 'Vorsetzen',
     reset: 'Zurücksetzen',
     start: 'Start',
+    settings: 'Einstellungen',
   },
 
   settings: {
@@ -25,12 +26,12 @@ export default {
     action: {
       ok: 'Ok',
     },
+  },
 
-    error: {
-      newController: {
-        message: 'Neue Controller sind vom diesem Spiel ausgeschlossen!.',
-        caption: 'Controller: ',
-      },
+  error: {
+    newController: {
+      message: 'Neue Controller sind von diesem Spiel ausgeschlossen.',
+      caption: 'Controller: ',
     },
   },
 };

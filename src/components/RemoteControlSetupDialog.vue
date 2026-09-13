@@ -34,6 +34,10 @@
           <div class="text-caption q-mt-md text-weight-bold">
             {{ serverInfo.url }}
           </div>
+
+          <div class="text-h4 q-mt-md text-weight-bold text-primary">
+            {{ t('remote.setup.pin', { pin: serverInfo.pin }) }}
+          </div>
         </template>
       </q-card-section>
 
@@ -49,11 +53,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useDialogPluginComponent } from 'quasar';
 import QRCode from 'qrcode';
 import { useI18n } from 'vue-i18n';
-import type { RemoteServerInfo } from '@/../common/RemoteAPI';
+import type { RemoteServerInfo, RemoteAction } from '@/../common/RemoteAPI';
 
 const { t } = useI18n();
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
@@ -76,5 +80,20 @@ onMounted(async () => {
       });
     }
   }
+  if (typeof window !== 'undefined') {
+    window.addEventListener('remote-action', onRemoteAction as EventListener);
+  }
 });
+
+onUnmounted(() => {
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('remote-action', onRemoteAction as EventListener);
+  }
+});
+
+function onRemoteAction(e: CustomEvent<RemoteAction>) {
+  if (e.detail?.action === 'remote:connected') {
+    onDialogOK();
+  }
+}
 </script>

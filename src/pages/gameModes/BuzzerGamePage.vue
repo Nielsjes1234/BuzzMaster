@@ -186,12 +186,12 @@ import { storeToRefs } from 'pinia';
 
 const quasar = useQuasar();
 const { t } = useI18n();
-const quizSettingsStore = useGameSettingsStore();
-const { buzzerSettings } = storeToRefs(quizSettingsStore);
+const gameSettingsStore = useGameSettingsStore();
+const { buzzerSettings } = storeToRefs(gameSettingsStore);
 const { createAudio } = useAudio();
 const { controllers, buzzer } = useBuzzer();
 const { time, stopTimer, startTimer } = useTimer({
-  updateRate: 100,
+  updateRate: 20,
   direction: 'down',
 });
 const { gameState, transition, onStateEntry, onStateExit } =
@@ -224,6 +224,17 @@ function onRemoteAction(e: CustomEvent) {
     ['running', 'answering', 'answered'].includes(gameState.value.name)
   )
     restart();
+  if (
+    action === 'buzzer:reOpen' &&
+    ['answering', 'answered'].includes(gameState.value.name) &&
+    !disableContinue.value
+  )
+    continueQuestion();
+  if (
+    action === 'buzzer:quickPlay' &&
+    ['answering', 'answered'].includes(gameState.value.name)
+  )
+    quickPlay();
 }
 
 const disableContinue = computed<boolean>(() => {
@@ -277,6 +288,7 @@ const listener = transition('running', (state, event: ButtonEvent) => {
     name: 'answering',
     time: buzzerSettings.value.answerTime,
     controller: event.controller.id,
+    controllerName: event.controller.name,
     pressedControllers,
   };
 });
@@ -314,6 +326,7 @@ const onPointsUpdate = transition(
         game: 'buzzer',
         name: 'answered',
         controller: state.controller,
+        controllerName: state.controllerName,
         pressedControllers: state.pressedControllers,
         correct,
         points,
@@ -324,6 +337,7 @@ const onPointsUpdate = transition(
       game: 'buzzer',
       name: 'answering',
       controller: state.controller,
+      controllerName: state.controllerName,
       pressedControllers: state.pressedControllers,
       time: 0,
     };

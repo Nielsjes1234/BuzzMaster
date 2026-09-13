@@ -12,6 +12,7 @@ export default {
     resume: 'Resume',
     reset: 'Reset',
     start: 'Start',
+    settings: 'Settings',
   },
 
   settings: {

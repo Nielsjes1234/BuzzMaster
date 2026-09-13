@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, onUnmounted, ref } from 'vue';
 import { useLeaderboardStore } from '@/stores/leaderboard-store';
 import { useGameSettingsStore } from '@/stores/game-settings-store';
 import type { IController } from '@/plugins/buzzer/types';
@@ -47,7 +47,22 @@ const audioWrong = createAudio('sounds/answer-wrong.mp3');
 onBeforeMount(() => {
   audioCorrect.load();
   audioWrong.load();
+  window.addEventListener('remote-action', onRemoteAction as EventListener);
 });
+
+onUnmounted(() => {
+  window.removeEventListener('remote-action', onRemoteAction as EventListener);
+});
+
+function onRemoteAction(e: CustomEvent) {
+  const { action, payload } = e.detail;
+  if (
+    action === 'buzzer:answer' &&
+    (payload === true || payload === false)
+  ) {
+    void onAnswerChange(payload as boolean);
+  }
+}
 
 const answerCorrect = ref<boolean>();
 

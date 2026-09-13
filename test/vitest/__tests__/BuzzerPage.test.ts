@@ -227,6 +227,7 @@ describe('BuzzerPage', () => {
         name: 'answering',
         time: 5,
         controller: deviceApi.getController(0).id,
+        controllerName: deviceApi.getController(0).name,
         pressedControllers: [deviceApi.getController(0).id],
       });
       await nextTick();
@@ -292,6 +293,7 @@ describe('BuzzerPage', () => {
         name: 'answering',
         time: 5,
         controller: deviceApi.getController(0).id,
+        controllerName: deviceApi.getController(0).name,
         pressedControllers: [
           deviceApi.getController(0).id,
           deviceApi.getController(1).id,
@@ -331,6 +333,7 @@ describe('BuzzerPage', () => {
         game: 'buzzer',
         name: 'answered',
         controller: deviceApi.getController(0).id,
+        controllerName: deviceApi.getController(0).name,
         pressedControllers: [deviceApi.getController(0).id],
         correct: false,
         points: 5,
@@ -373,6 +376,7 @@ describe('BuzzerPage', () => {
         game: 'buzzer',
         name: 'answered',
         controller: deviceApi.getController(0).id,
+        controllerName: deviceApi.getController(0).name,
         pressedControllers: [
           deviceApi.getController(0).id,
           deviceApi.getController(1).id,

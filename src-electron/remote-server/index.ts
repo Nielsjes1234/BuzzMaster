@@ -8,6 +8,7 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 let io: Server | null = null;
 const serverPort = 3000;
 let isRunning = false;
+let serverPin = '0000';
 
 let actionCallback: ((action: unknown) => void) | null = null;
 let statusCallback: ((running: boolean) => void) | null = null;
@@ -69,14 +70,34 @@ export function startServer() {
   const app = express();
   const httpServer = createServer(app);
 
+  // Generate a random 4-digit PIN
+  serverPin = Math.floor(1000 + Math.random() * 9000).toString();
+
   io = new Server(httpServer, {
     cors: {
       origin: '*',
     },
   });
 
+  io.use((socket, next) => {
+    const pin = socket.handshake.auth.pin;
+    if (pin === serverPin) {
+      return next();
+    }
+    return next(new Error('invalid_pin'));
+  });
+
   io.on('connection', (socket) => {
     log.info('Remote connected:', socket.id);
+
+    // Send latest state to the newly connected remote
+    Object.entries(dataSnapshot).forEach(([name, args]) => {
+      socket.emit(name, ...args);
+    });
+
+    if (actionCallback) {
+      actionCallback({ action: 'remote:connected' });
+    }
 
     socket.on('action', (action) => {
       if (actionCallback) actionCallback(action);
@@ -125,10 +146,16 @@ export function getServerInfo() {
     ip: address,
     port: serverPort,
     url,
+    pin: serverPin,
   };
 }
 
+const dataSnapshot: Record<string, unknown[]> = {};
+
 export function broadcastToRemotes(event: string, ...args: unknown[]) {
+  // Keep a snapshot of the last sent arguments for each event
+  dataSnapshot[event] = args;
+
   if (io) {
     io.emit(event, ...args);
   }

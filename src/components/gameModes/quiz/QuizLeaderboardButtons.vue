@@ -16,7 +16,7 @@
 <script lang="ts" setup>
 import { buzzerButtonColor } from '@/components/buttonColors';
 import type { BuzzerButton } from '@/plugins/buzzer/types';
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, onUnmounted, ref } from 'vue';
 import { useLeaderboardStore } from '@/stores/leaderboard-store';
 import { useGameSettingsStore } from '@/stores/game-settings-store';
 import { useAudio } from '@/composables/audio';
@@ -44,7 +44,19 @@ const audioCorrect = createAudio('sounds/answer-correct.mp3');
 
 onBeforeMount(() => {
   audioCorrect.load();
+  window.addEventListener('remote-action', onRemoteAction as EventListener);
 });
+
+onUnmounted(() => {
+  window.removeEventListener('remote-action', onRemoteAction as EventListener);
+});
+
+function onRemoteAction(e: CustomEvent) {
+  const { action, payload } = e.detail;
+  if (action === 'quiz:answer' && payload !== undefined) {
+    void updateButtonPoints(payload as BuzzerButton);
+  }
+}
 
 const updateButtonPoints = async (button: BuzzerButton): Promise<void> => {
   // Revert the points of the previous selection

@@ -51,12 +51,28 @@ describe('RemoteIndexPage', () => {
     });
   };
 
-  it('shows waiting for connection state', () => {
+  it('shows login screen if not connected', () => {
     const wrapper = mountPage();
     const store = useRemoteStore();
 
-    expect(store.connectToRemoteServer).toHaveBeenCalled();
-    expect(wrapper.text()).toContain('remote.status.waiting');
+    expect(store.connectToRemoteServer).not.toHaveBeenCalled();
+    expect(wrapper.text()).toContain('remote.auth.title');
+  });
+
+  it('attempts to connect when PIN is entered', async () => {
+    const wrapper = mountPage();
+    const store = useRemoteStore();
+
+    // Find pin input and set value to 1234
+    const inputs = wrapper.findAll('input');
+    await inputs[0]!.setValue('1234');
+    
+    // Find connect button and click
+    const connectBtn = wrapper.findAll('button').find(b => b.text().includes('remote.auth.connect'));
+    await connectBtn!.trigger('click');
+
+    expect(store.connectToRemoteServer).toHaveBeenCalledWith('1234');
+    expect(wrapper.text()).toContain('remote.auth.connecting');
   });
 
   it('shows main menu when connected with no game', async () => {

@@ -16,8 +16,8 @@ export default {
     leaderboard: 'Scorebord',
   },
   exit: {
-    title: 'Buzz Master Afsluiten',
-    message: 'Weet je zeker dat je Buzz Master wilt afsluiten?',
+    title: 'BuzzMaster Afsluiten',
+    message: 'Weet je zeker dat je BuzzMaster wilt afsluiten?',
     action: {
       ok: 'Afsluiten',
       cancel: 'Annuleren',

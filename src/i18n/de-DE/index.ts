@@ -18,8 +18,8 @@ export default {
   },
 
   exit: {
-    title: 'Buzz Master beenden',
-    message: 'Möchtest du Buzz Master wirklich schließen?',
+    title: 'BuzzMaster beenden',
+    message: 'Möchtest du BuzzMaster wirklich schließen?',
     action: {
       ok: 'Beenden',
       cancel: 'Abbrechen',
