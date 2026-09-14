@@ -31,15 +31,15 @@ export const useGameStore = defineStore('game-store', () => {
       typeof window.remoteAPI !== 'undefined' &&
       window.remoteAPI
     ) {
-      // Strip high-frequency fields (time) before sending over IPC 
-      // to avoid IPC flooding. We use JSON.stringify for a very fast 
+      // Strip high-frequency fields (time) before sending over IPC
+      // to avoid IPC flooding. We use JSON.stringify for a very fast
       // deep equality check and serialization, avoiding lodash overhead.
       // Note: We use the raw incoming `gameState` here rather than `state.value`
       // to avoid triggering heavy Vue proxy tracking 60 times a second.
       const strippedState = { ...gameState } as Record<string, unknown>;
       delete strippedState.time;
       const serialized = JSON.stringify(strippedState);
-      
+
       if (serialized !== lastSentState) {
         lastSentState = serialized;
         window.remoteAPI.updateGameState(JSON.parse(serialized));

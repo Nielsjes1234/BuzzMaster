@@ -56,10 +56,14 @@
           </template>
 
           <!-- Otherwise show PIN input form -->
-          <q-card v-else bordered class="q-pa-md bg-dark text-white">
+          <q-card
+            v-else
+            bordered
+            class="q-pa-md bg-dark text-white"
+          >
             <q-card-section>
               <div class="text-h6 q-mb-md">{{ t('remote.auth.title') }}</div>
-              
+
               <q-input
                 v-model="pinInput"
                 outlined
@@ -67,12 +71,18 @@
                 type="tel"
                 :label="t('remote.auth.pinLabel')"
                 :error="!!remoteStore.connectionError"
-                :error-message="remoteStore.connectionError === 'invalid_pin' ? t('remote.auth.invalidPin') : (remoteStore.connectionError || undefined)"
+                :error-message="
+                  remoteStore.connectionError === 'invalid_pin'
+                    ? t('remote.auth.invalidPin')
+                    : remoteStore.connectionError === 'rate_limited'
+                      ? t('remote.auth.rateLimited')
+                      : remoteStore.connectionError || undefined
+                "
                 mask="####"
                 class="q-mb-md"
                 @keyup.enter="connect"
               />
-              
+
               <q-btn
                 color="primary"
                 class="full-width text-weight-bold"
@@ -316,14 +326,18 @@
               <!-- answering / answered -->
               <template
                 v-else-if="
-                  ['answering', 'answered'].includes(
-                    remoteStore.gameState.name,
-                  )
+                  ['answering', 'answered'].includes(remoteStore.gameState.name)
                 "
               >
                 <!-- Display who buzzed in -->
-                <div class="text-h4 text-center q-mb-md text-weight-bold text-primary">
-                  {{ 'controllerName' in remoteStore.gameState ? remoteStore.gameState.controllerName : '' }}
+                <div
+                  class="text-h4 text-center q-mb-md text-weight-bold text-primary"
+                >
+                  {{
+                    'controllerName' in remoteStore.gameState
+                      ? remoteStore.gameState.controllerName
+                      : ''
+                  }}
                 </div>
 
                 <!-- Correct / Wrong buttons (mirrors BuzzerLeaderboardButtons) -->
@@ -571,7 +585,6 @@ import { useRemoteStore } from '@/stores/remote-store';
 import { useI18n } from 'vue-i18n';
 import type { BuzzerButton } from '@/plugins/buzzer/types';
 
-
 const { t, locale } = useI18n();
 const remoteStore = useRemoteStore();
 
@@ -580,7 +593,7 @@ watch(
   (newLocale) => {
     locale.value = newLocale;
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 // -- Buzzer answer state (mirrors BuzzerLeaderboardButtons.answerCorrect) --
@@ -603,7 +616,7 @@ function connect() {
     isConnecting.value = true;
     sessionStorage.setItem('remotePin', pinInput.value);
     remoteStore.connectToRemoteServer(pinInput.value);
-    
+
     // Stop loading animation after a short delay so error can be shown
     setTimeout(() => {
       isConnecting.value = false;
@@ -634,11 +647,11 @@ const selectedAnswers = ref<Set<BuzzerButton>>(new Set());
  * Mirrors src/components/buttonColors.ts (cannot import from remote context).
  */
 const buzzerButtonColors: Record<number, string> = {
-  0: 'red',     // BuzzerButton.RED
-  1: 'blue',    // BuzzerButton.BLUE
-  2: 'orange',  // BuzzerButton.ORANGE
-  3: 'green',   // BuzzerButton.GREEN
-  4: 'yellow',  // BuzzerButton.YELLOW
+  0: 'red', // BuzzerButton.RED
+  1: 'blue', // BuzzerButton.BLUE
+  2: 'orange', // BuzzerButton.ORANGE
+  3: 'green', // BuzzerButton.GREEN
+  4: 'yellow', // BuzzerButton.YELLOW
 };
 
 /** Active buttons sent from host via gameSettings. Falls back to empty array. */

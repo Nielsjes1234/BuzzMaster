@@ -40,7 +40,8 @@ export default {
   },
   setup: {
     title: 'Fernbedienung einrichten',
-    description: 'Scannen Sie diesen QR-Code mit Ihrem Telefon, um es als Fernbedienung zu verwenden, oder navigieren Sie zur untenstehenden URL.',
+    description:
+      'Scannen Sie diesen QR-Code mit Ihrem Telefon, um es als Fernbedienung zu verwenden, oder navigieren Sie zur untenstehenden URL.',
     pin: 'PIN: {pin}',
     close: 'Schließen',
   },
@@ -49,6 +50,7 @@ export default {
     pinLabel: '4-stellige PIN',
     connect: 'Verbinden',
     connecting: 'Verbinden...',
+    rateLimited: 'Zu viele fehlgeschlagene Versuche. Bitte 30 Sekunden warten.',
     invalidPin: 'Falsche PIN',
   },
 };

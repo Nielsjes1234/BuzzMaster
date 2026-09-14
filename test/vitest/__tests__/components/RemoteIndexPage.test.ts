@@ -8,6 +8,8 @@ import type { GameState } from '@/../common/gameState';
 
 installQuasarPlugin();
 
+import { ref } from 'vue';
+
 vi.mock('vue-i18n', () => ({
   useI18n: () => ({
     t: (key: string, args?: Record<string, string>) => {
@@ -16,6 +18,7 @@ vi.mock('vue-i18n', () => ({
       }
       return key;
     },
+    locale: ref('en-US'),
   }),
 }));
 
@@ -66,9 +69,11 @@ describe('RemoteIndexPage', () => {
     // Find pin input and set value to 1234
     const inputs = wrapper.findAll('input');
     await inputs[0]!.setValue('1234');
-    
+
     // Find connect button and click
-    const connectBtn = wrapper.findAll('button').find(b => b.text().includes('remote.auth.connect'));
+    const connectBtn = wrapper
+      .findAll('button')
+      .find((b) => b.text().includes('remote.auth.connect'));
     await connectBtn!.trigger('click');
 
     expect(store.connectToRemoteServer).toHaveBeenCalledWith('1234');

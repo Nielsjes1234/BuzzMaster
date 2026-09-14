@@ -87,7 +87,10 @@ onMounted(async () => {
 
 onUnmounted(() => {
   if (typeof window !== 'undefined') {
-    window.removeEventListener('remote-action', onRemoteAction as EventListener);
+    window.removeEventListener(
+      'remote-action',
+      onRemoteAction as EventListener,
+    );
   }
 });
 

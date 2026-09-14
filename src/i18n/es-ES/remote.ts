@@ -40,7 +40,8 @@ export default {
   },
   setup: {
     title: 'Configuración del control remoto',
-    description: 'Escanee este código QR con su teléfono para usarlo como control remoto, o navegue a la URL a continuación.',
+    description:
+      'Escanee este código QR con su teléfono para usarlo como control remoto, o navegue a la URL a continuación.',
     pin: 'PIN: {pin}',
     close: 'Cerrar',
   },
@@ -49,6 +50,7 @@ export default {
     pinLabel: 'PIN de 4 dígitos',
     connect: 'Conectar',
     connecting: 'Conectando...',
+    rateLimited: 'Demasiados intentos fallidos. Espere 30 segundos.',
     invalidPin: 'PIN incorrecto',
   },
 };

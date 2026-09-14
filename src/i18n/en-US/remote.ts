@@ -40,7 +40,8 @@ export default {
   },
   setup: {
     title: 'Remote Control Setup',
-    description: 'Scan this QR code with your phone to use it as a remote control, or navigate to the URL below.',
+    description:
+      'Scan this QR code with your phone to use it as a remote control, or navigate to the URL below.',
     pin: 'PIN: {pin}',
     close: 'Close',
   },
@@ -49,6 +50,7 @@ export default {
     pinLabel: '4-digit PIN',
     connect: 'Connect',
     connecting: 'Connecting...',
+    rateLimited: 'Too many failed attempts. Please wait 30 seconds.',
     invalidPin: 'Invalid PIN',
   },
 };

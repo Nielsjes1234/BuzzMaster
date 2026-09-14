@@ -73,17 +73,45 @@ export function startServer() {
   // Generate a random 4-digit PIN
   serverPin = Math.floor(1000 + Math.random() * 9000).toString();
 
+  // Strict CORS: only allow same-origin requests (e.g. from the mobile app loaded via the server itself)
   io = new Server(httpServer, {
     cors: {
-      origin: '*',
+      origin: (origin, callback) => {
+        if (!origin || origin.includes(`:${serverPort}`)) {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
     },
   });
 
+  const failedAttempts = new Map<
+    string,
+    { count: number; lockUntil: number }
+  >();
+
   io.use((socket, next) => {
     const pin = socket.handshake.auth.pin;
+    const ip = socket.handshake.address;
+
+    const attempt = failedAttempts.get(ip) || { count: 0, lockUntil: 0 };
+
+    if (Date.now() < attempt.lockUntil) {
+      return next(new Error('rate_limited'));
+    }
+
     if (pin === serverPin) {
+      failedAttempts.delete(ip);
       return next();
     }
+
+    attempt.count++;
+    if (attempt.count >= 3) {
+      attempt.lockUntil = Date.now() + 30000; // 30 seconds lockout
+    }
+    failedAttempts.set(ip, attempt);
+
     return next(new Error('invalid_pin'));
   });
 

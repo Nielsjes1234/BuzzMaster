@@ -331,15 +331,12 @@ onUnmounted(async () => {
 
 function onRemoteAction(e: CustomEvent) {
   const { action } = e.detail;
-  if (action === 'simon:start' && gameState.value.name === 'preparing')
-    start();
+  if (action === 'simon:start' && gameState.value.name === 'preparing') start();
   if (action === 'simon:nextRound' && gameState.value.name === 'roundOver')
     nextRound();
   if (
     action === 'simon:restart' &&
-    ['showing', 'input', 'roundOver', 'gameOver'].includes(
-      gameState.value.name,
-    )
+    ['showing', 'input', 'roundOver', 'gameOver'].includes(gameState.value.name)
   )
     restart();
 }

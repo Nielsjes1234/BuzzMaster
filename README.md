@@ -32,6 +32,10 @@ When choosing to update the points manually, either new points can be set or the
 Shows a notification when a controller is about to go into energy saving mode.
 The feature is available for a controller after the first button press.
 
+### Remote Control
+
+A mobile-friendly companion app that allows the host to control the game (start rounds, manage points, and reset buzzers) while walking around. The app connects over the local network and is secured by a dynamic 4-digit PIN.
+
 ## Installation
 
 > [!Note]

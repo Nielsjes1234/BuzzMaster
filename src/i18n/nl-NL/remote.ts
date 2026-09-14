@@ -40,7 +40,8 @@ export default {
   },
   setup: {
     title: 'Remote Control Instellen',
-    description: 'Scan deze QR code met je telefoon om deze als afstandsbediening te gebruiken, of ga naar de onderstaande URL.',
+    description:
+      'Scan deze QR code met je telefoon om deze als afstandsbediening te gebruiken, of ga naar de onderstaande URL.',
     pin: 'PIN: {pin}',
     close: 'Sluiten',
   },
@@ -49,6 +50,7 @@ export default {
     pinLabel: '4-cijferige PIN',
     connect: 'Verbinden',
     connecting: 'Verbinden...',
+    rateLimited: 'Te veel mislukte pogingen. Wacht 30 seconden.',
     invalidPin: 'Onjuiste PIN',
   },
 };

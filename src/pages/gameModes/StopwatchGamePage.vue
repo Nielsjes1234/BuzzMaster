@@ -231,7 +231,7 @@ const { stopwatchSettings } = storeToRefs(gameSettingsStore);
 const { controllers, buzzer } = useBuzzer();
 const { createAudio, cloneAudio } = useAudio();
 const { time, stopTimer, startTimer, exactTime } = useTimer({
-  updateRate: 33,
+  updateRate: 50,
 });
 const { gameState, transition, createEvent, onStateEntry, onStateExit } =
   useGameState<StopwatchState>({
@@ -263,8 +263,7 @@ function onRemoteAction(e: CustomEvent) {
     pause();
   if (action === 'stopwatch:resume' && gameState.value.name === 'paused')
     resume();
-  if (action === 'stopwatch:stop' && gameState.value.name === 'paused')
-    stop();
+  if (action === 'stopwatch:stop' && gameState.value.name === 'paused') stop();
   if (
     action === 'stopwatch:cancel' &&
     ['running', 'paused'].includes(gameState.value.name)

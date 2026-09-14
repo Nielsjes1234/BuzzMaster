@@ -56,10 +56,7 @@ onUnmounted(() => {
 
 function onRemoteAction(e: CustomEvent) {
   const { action, payload } = e.detail;
-  if (
-    action === 'buzzer:answer' &&
-    (payload === true || payload === false)
-  ) {
+  if (action === 'buzzer:answer' && (payload === true || payload === false)) {
     void onAnswerChange(payload as boolean);
   }
 }
