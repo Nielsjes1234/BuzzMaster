@@ -10,6 +10,7 @@ export default {
   mute: 'Ton ausschalten',
   unmute: 'Ton einschalten',
   pin: 'Fenster im Vordergrund anheften',
+  slides: 'Präsentation',
   settings: 'Einstellungen umschalten',
   unpin: 'Fenster lösen',
   updater: 'Nach Updates suchen',

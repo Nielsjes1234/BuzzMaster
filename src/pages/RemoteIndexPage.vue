@@ -101,6 +101,72 @@
           class="full-width"
           style="max-width: 500px"
         >
+          <!-- ===== SLIDES Controls ===== -->
+          <q-card
+            v-if="remoteStore.slides.presentationId"
+            class="rounded-borders q-mb-md"
+            bordered
+          >
+            <q-card-section class="row items-center justify-between q-pb-none">
+              <div class="text-subtitle1 text-weight-bold text-primary">
+                {{ t('slides.title') }}
+              </div>
+              <q-btn
+                :color="remoteStore.slides.active ? 'negative' : 'positive'"
+                dense
+                rounded
+                no-caps
+                :icon="remoteStore.slides.active ? 'stop_screen_share' : 'present_to_all'"
+                :label="
+                  remoteStore.slides.active
+                    ? t('slides.action.hide')
+                    : t('slides.action.show')
+                "
+                @click="sendAction('slides:toggle')"
+              />
+            </q-card-section>
+
+            <q-card-section v-if="remoteStore.slides.active">
+              <div class="row q-col-gutter-md">
+                <div class="col-4">
+                  <q-btn
+                    color="grey-8"
+                    class="full-width q-py-md"
+                    push
+                    icon="chevron_left"
+                    :aria-label="t('slides.action.previous')"
+                    @click="sendAction('slides:previous')"
+                  />
+                </div>
+                <div class="col-8">
+                  <q-btn
+                    color="primary"
+                    class="full-width q-py-md text-weight-bold"
+                    push
+                    icon="chevron_right"
+                    :label="t('slides.action.next')"
+                    @click="sendAction('slides:next')"
+                  />
+                </div>
+              </div>
+
+              <q-btn
+                class="full-width q-py-md text-weight-bold q-mt-md"
+                push
+                :color="remoteStore.slides.blackout ? 'amber-8' : 'dark'"
+                :icon="
+                  remoteStore.slides.blackout ? 'visibility' : 'visibility_off'
+                "
+                :label="
+                  remoteStore.slides.blackout
+                    ? t('slides.action.unblackout')
+                    : t('slides.action.blackout')
+                "
+                @click="sendAction('slides:blackout')"
+              />
+            </q-card-section>
+          </q-card>
+
           <!-- No Game Active (Home Menu) -->
           <div v-if="!remoteStore.gameState">
             <q-card

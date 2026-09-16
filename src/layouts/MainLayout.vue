@@ -77,6 +77,23 @@
             <q-tooltip> Remote Control Setup </q-tooltip>
           </q-btn>
 
+          <q-btn
+            v-if="quasar.platform.is.electron"
+            :aria-label="t('toolbar.slides')"
+            key="slides"
+            dense
+            flat
+            rounded
+            size="sm"
+            class="settings-button bg-primary"
+            :icon="slidesStore.active ? 'slideshow' : 'present_to_all'"
+            @click="openSlidesSetup"
+          >
+            <q-tooltip>
+              {{ t('toolbar.slides') }}
+            </q-tooltip>
+          </q-btn>
+
           <!-- Settings -->
           <div
             v-if="expandSettings"
@@ -353,6 +370,8 @@ import OnlineDialog from '@/components/layout/OnlineDialog.vue';
 import RemoteControlSetupDialog from '@/components/RemoteControlSetupDialog.vue';
 import type { RemoteAction } from '@/../common/RemoteAPI';
 import { useRemoteStore } from '@/stores/remote-store';
+import SlidesSetupDialog from '@/components/SlidesSetupDialog.vue';
+import { useSlidesStore } from '@/stores/slides-store';
 
 const router = useRouter();
 const route = useRoute();
@@ -363,6 +382,7 @@ const gameStore = useGameStore();
 const gameSettingsStore = useGameSettingsStore();
 const castWindowStore = useCastWindowStore();
 const remoteStore = useRemoteStore();
+const slidesStore = useSlidesStore();
 
 useBatterySavingStore();
 useUpdaterStore();
@@ -472,6 +492,12 @@ function openRemoteControlSetup() {
   });
 }
 
+function openSlidesSetup() {
+  quasar.dialog({
+    component: SlidesSetupDialog,
+  });
+}
+
 function openDevTools() {
   window.windowAPI.openDevTools();
 }
@@ -486,6 +512,7 @@ onMounted(() => {
   if (quasar.platform.is.electron) {
     castWindowStore.initialize();
     remoteStore.connectToRemoteServer();
+    slidesStore.initialize();
 
     // Send the initial state of the game store for the cast window
     sendGameState(gameStore.state);

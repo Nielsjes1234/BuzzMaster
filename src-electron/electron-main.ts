@@ -3,6 +3,7 @@ import initWindowApiHandler from '@/../src-electron/windowAPI/main';
 import initAppApiHandler from '@/../src-electron/appAPI/main';
 import initCastApiHandler from '@/../src-electron/castAPI/main';
 import initRemoteApiHandler from '@/../src-electron/remoteAPI/main';
+import initSlidesApiHandler from '@/../src-electron/slidesAPI/main';
 import path from 'path';
 import os from 'os';
 import log from 'electron-log';
@@ -161,7 +162,8 @@ app
     registerQuasarRuntime();
     initAppApiHandler();
     initWindowApiHandler();
-    initCastApiHandler(createCastWindow);
+    const slidesApi = initSlidesApiHandler(() => mainWindow);
+    initCastApiHandler(createCastWindow, slidesApi.setCastWindow);
     initRemoteApiHandler();
     await createWindow();
   })

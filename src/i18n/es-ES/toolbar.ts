@@ -10,6 +10,7 @@ export default {
   mute: 'Silenciar',
   unmute: 'Con Sonido',
   pin: 'Anclar ventana siempre delante',
+  slides: 'Presentación',
   settings: 'Interruptor de Ajustes',
   unpin: 'Desanclar ventana',
   updater: 'Buscar Actualizaciones',

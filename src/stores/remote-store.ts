@@ -5,6 +5,7 @@ import { useQuasar } from 'quasar';
 import type { RemoteAction } from '@/../common/RemoteAPI';
 import type { GameState } from '@/../common/gameState';
 import type { GameSettings } from '@/../common/gameSettings';
+import { emptySlidesState, type SlidesState } from '@/../common/SlidesAPI';
 
 /**
  * Manages the state and communication for the Remote Control Companion App.
@@ -28,6 +29,7 @@ export const useRemoteStore = defineStore('remoteStore', () => {
   const gameState = ref<GameState | undefined>(undefined);
   const gameSettings = ref<GameSettings | undefined>(undefined);
   const locale = ref<string>('en-US');
+  const slides = ref<SlidesState>(emptySlidesState());
 
   /**
    * Initializes the connection depending on the environment.
@@ -85,6 +87,10 @@ export const useRemoteStore = defineStore('remoteStore', () => {
       locale.value = l;
     });
 
+    socketInstance.on('slides', (state: SlidesState) => {
+      slides.value = state ?? emptySlidesState();
+    });
+
     socket.value = socketInstance;
   }
 
@@ -111,5 +117,6 @@ export const useRemoteStore = defineStore('remoteStore', () => {
     gameState,
     gameSettings,
     locale,
+    slides,
   };
 });
