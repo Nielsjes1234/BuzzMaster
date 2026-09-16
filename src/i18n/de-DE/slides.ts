@@ -27,6 +27,8 @@ export default {
   error: {
     invalidUrl: 'Das sieht nicht nach einem Google-Slides-Link aus.',
     noCastWindow: 'Öffne zuerst das Cast-Fenster.',
+    notShared:
+      'Google verlangt eine Anmeldung. Gib die Präsentation für alle mit dem Link frei.',
     loadFailed: 'Die Präsentation konnte nicht geladen werden.',
   },
 };

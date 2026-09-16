@@ -26,7 +26,7 @@ export interface SlidesState {
 export interface SlidesOpenResult {
   ok: boolean;
   /** Translation key under `slides.error`, set when `ok` is false. */
-  error?: 'invalidUrl' | 'noCastWindow' | 'loadFailed';
+  error?: 'invalidUrl' | 'noCastWindow' | 'notShared' | 'loadFailed';
 }
 
 export const emptySlidesState = (): SlidesState => ({

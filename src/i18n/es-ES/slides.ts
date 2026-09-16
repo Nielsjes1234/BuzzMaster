@@ -27,6 +27,8 @@ export default {
   error: {
     invalidUrl: 'Esto no parece un enlace de Google Slides.',
     noCastWindow: 'Abre primero la ventana de cast.',
+    notShared:
+      'Google pide iniciar sesión. Comparte la presentación con cualquier persona que tenga el enlace.',
     loadFailed: 'No se ha podido cargar la presentación.',
   },
 };

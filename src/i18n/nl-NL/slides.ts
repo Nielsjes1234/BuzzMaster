@@ -27,6 +27,8 @@ export default {
   error: {
     invalidUrl: 'Dit lijkt geen Google Slides-link te zijn.',
     noCastWindow: 'Open eerst het castvenster.',
+    notShared:
+      'Google vraagt om in te loggen. Deel de presentatie met iedereen die de link heeft.',
     loadFailed: 'De presentatie kon niet worden geladen.',
   },
 };

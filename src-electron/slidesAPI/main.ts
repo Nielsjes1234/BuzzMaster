@@ -1,18 +1,19 @@
 import { BrowserWindow, ipcMain, screen } from 'electron';
+import Store from 'electron-store';
 import log from 'electron-log';
 import {
   emptySlidesState,
   type SlidesOpenResult,
   type SlidesState,
 } from '@/../common/SlidesAPI';
+import {
+  isSignInUrl,
+  parsePresentation,
+  presentationUrl,
+  type PresentationTarget,
+} from '@/../src-electron/slidesAPI/presentation-url';
 
 type WindowAccessor = () => BrowserWindow | undefined;
-
-interface PresentationTarget {
-  id: string;
-  /** True for "publish to web" links, which use a different URL shape. */
-  published: boolean;
-}
 
 /**
  * Painted over the Google Slides page to blank it out. The presentation window
@@ -33,45 +34,15 @@ const BLACKOUT_CSS = `
   }
 `;
 
-/**
- * Accepts anything the user is likely to paste:
- *   https://docs.google.com/presentation/d/<id>/edit#slide=id.p
- *   https://docs.google.com/presentation/d/<id>/present
- *   https://docs.google.com/presentation/d/e/<id>/pub?start=false
- *   <id>
- */
-export function parsePresentation(input: string): PresentationTarget | null {
-  const value = input.trim();
-
-  if (value.length === 0) {
-    return null;
-  }
-
-  const published = /\/presentation\/d\/e\/([a-zA-Z0-9_-]+)/.exec(value);
-  if (published?.[1]) {
-    return { id: published[1], published: true };
-  }
-
-  const standard = /\/presentation\/d\/([a-zA-Z0-9_-]+)/.exec(value);
-  if (standard?.[1]) {
-    return { id: standard[1], published: false };
-  }
-
-  // A bare id pasted without the surrounding URL.
-  if (/^[a-zA-Z0-9_-]{20,}$/.test(value)) {
-    return { id: value, published: false };
-  }
-
-  return null;
-}
-
-export function presentationUrl(target: PresentationTarget): string {
-  const params = 'start=false&loop=false&rm=minimal';
-
-  return target.published
-    ? `https://docs.google.com/presentation/d/e/${target.id}/pub?${params}`
-    : `https://docs.google.com/presentation/d/${target.id}/present?${params}`;
-}
+/** Remembers the last deck across restarts, in its own settings file. */
+const store = new Store<{ sourceUrl?: string }>({
+  name: 'slides',
+  schema: {
+    sourceUrl: {
+      type: 'string',
+    },
+  },
+});
 
 export default (getMainWindow: WindowAccessor) => {
   let castWindow: BrowserWindow | undefined;
@@ -82,6 +53,26 @@ export default (getMainWindow: WindowAccessor) => {
   // Set when a presentation was requested while no cast window was open, so it
   // can be shown as soon as one appears.
   let pending = false;
+
+  restorePersistedPresentation();
+
+  /** Pre-fills the last used deck so it does not have to be pasted again. */
+  function restorePersistedPresentation() {
+    const persisted = store.get('sourceUrl');
+
+    if (typeof persisted !== 'string') {
+      return;
+    }
+
+    const parsed = parsePresentation(persisted);
+
+    if (parsed === null) {
+      return;
+    }
+
+    target = parsed;
+    state = { ...state, presentationId: parsed.id, sourceUrl: persisted };
+  }
 
   ipcMain.handle('slides:open', (_event, url: string) => open(url));
   ipcMain.handle('slides:reopen', () => reopen());
@@ -137,6 +128,7 @@ export default (getMainWindow: WindowAccessor) => {
 
     target = parsed;
     state = { ...state, presentationId: parsed.id, sourceUrl: url.trim() };
+    store.set('sourceUrl', state.sourceUrl);
 
     return openPresentationWindow(parsed);
   }
@@ -208,6 +200,18 @@ export default (getMainWindow: WindowAccessor) => {
 
     // The cast window floats over this one wherever the two overlap.
     window.setAlwaysOnTop(false);
+    window.webContents.on(
+      'did-fail-load',
+      (_event, errorCode, errorDescription, validatedURL, isMainFrame) => {
+        if (!isMainFrame) {
+          return;
+        }
+
+        log.error(
+          `Presentation failed to load (${errorCode} ${errorDescription}): ${validatedURL}`,
+        );
+      },
+    );
     window.on('closed', () => {
       if (presentationWindow === window) {
         presentationWindow = undefined;
@@ -227,6 +231,16 @@ export default (getMainWindow: WindowAccessor) => {
 
     if (window.isDestroyed()) {
       return { ok: false, error: 'loadFailed' };
+    }
+
+    // A deck that is not shared loads successfully, but lands on Google's
+    // sign-in page instead of the slides. Catch that here rather than putting a
+    // login screen on the projector.
+    if (isSignInUrl(window.webContents.getURL())) {
+      closePresentationWindow();
+      pending = false;
+      publish({ ...state, active: false });
+      return { ok: false, error: 'notShared' };
     }
 
     // Show without stealing focus from the host window, then raise the cast

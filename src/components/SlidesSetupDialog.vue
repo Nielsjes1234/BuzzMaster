@@ -161,6 +161,8 @@ const errorMessage = computed<string | undefined>(() => {
       return t('slides.error.invalidUrl');
     case 'noCastWindow':
       return t('slides.error.noCastWindow');
+    case 'notShared':
+      return t('slides.error.notShared');
     case 'loadFailed':
       return t('slides.error.loadFailed');
     default:

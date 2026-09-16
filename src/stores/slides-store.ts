@@ -107,19 +107,36 @@ export const useSlidesStore = defineStore('slides', () => {
     { deep: true },
   );
 
+  let initialized = false;
+
   function initialize() {
     if (typeof window === 'undefined' || window.slidesAPI === undefined) {
       return;
     }
 
+    // MainLayout can mount more than once over the life of the app; without
+    // this guard every remote action would be handled twice.
+    if (initialized) {
+      return;
+    }
+
+    initialized = true;
+
+    // The initial fetch below is async, so a state pushed in the meantime must
+    // not be overwritten by the snapshot we asked for first.
+    let pushed = false;
+
     window.slidesAPI.onStateChange((value) => {
+      pushed = true;
       state.value = value;
     });
 
     window.slidesAPI
       .getState()
       .then((value) => {
-        state.value = value;
+        if (!pushed) {
+          state.value = value;
+        }
       })
       .catch((reason: unknown) => {
         console.error(reason);
