@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onBeforeMount, onUnmounted, ref } from 'vue';
+import { onBeforeMount, onUnmounted, ref, watch } from 'vue';
 import { useLeaderboardStore } from '@/stores/leaderboard-store';
 import { useGameSettingsStore } from '@/stores/game-settings-store';
 import type { IController } from '@/plugins/buzzer/types';
@@ -63,6 +63,24 @@ function onRemoteAction(e: CustomEvent) {
 
 const answerCorrect = ref<boolean>();
 
+/*
+ * The host undid this verdict. `answerCorrect` is what tells the next press
+ * how much to hand back, and after an undo it describes points that are no
+ * longer on the board, so it is cleared along with the correct/wrong ring.
+ * Undoing anything else leaves this component's arithmetic intact.
+ */
+watch(
+  () => leaderboardStore.undoCount,
+  () => {
+    if (leaderboardStore.undoneOrigin !== 'buzzer') {
+      return;
+    }
+
+    answerCorrect.value = undefined;
+    emit('update', undefined, undefined);
+  },
+);
+
 const onAnswerChange = async (answer: boolean) => {
   const points = answer
     ? buzzerSettings.pointsCorrect
@@ -100,7 +118,7 @@ const playAudio = async (answer: boolean) => {
 };
 
 const updateLeaderboard = (points: number) => {
-  leaderboardStore.addPoints(props.controller.id, points);
+  leaderboardStore.addPoints(props.controller.id, points, 'buzzer');
 };
 </script>
 

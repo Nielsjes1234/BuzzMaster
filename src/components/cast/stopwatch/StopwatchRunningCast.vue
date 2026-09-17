@@ -3,7 +3,7 @@
     <beep-timer
       :time="props.state.time"
       :precision="2"
-      class="text-center text-h2"
+      class="text-center bm-clock"
     />
 
     <q-separator />
@@ -24,22 +24,12 @@
           class="entry"
         >
           <td>
-            <q-avatar
-              v-if="item.time !== undefined"
-              :color="avatarColor(index)"
-              text-color="white"
-              size="md"
+            <span
+              class="rank"
+              :class="{ 'rank--podium': item.time !== undefined && index < 3 }"
             >
-              {{ index + 1 }}
-            </q-avatar>
-            <q-avatar
-              v-else
-              :color="avatarColor(-1)"
-              text-color="white"
-              size="md"
-            >
-              -
-            </q-avatar>
+              {{ item.time === undefined ? '–' : index + 1 }}
+            </span>
           </td>
 
           <td class="full-width">
@@ -125,32 +115,70 @@ const result = computed<ResultItem[]>(() => {
 
 const pointsClass = (points: number | undefined): string => {
   if (points === undefined || points === 0) {
-    return 'text-blue';
+    return 'points--even';
   }
 
   if (points > 0) {
-    return 'text-green';
+    return 'points--gain';
   }
 
-  return 'text-red';
-};
-
-const avatarColor = (index: number) => {
-  switch (index) {
-    case 0:
-      return 'primary';
-    case 1:
-      return 'secondary';
-    case 2:
-      return 'info';
-  }
-
-  return 'grey';
+  return 'points--loss';
 };
 </script>
 
 <style scoped>
 .entry td {
-  font-size: 18pt;
+  font-size: clamp(14px, 2.4vmin, 34px);
+  font-family: var(--bm-font-display);
+  font-weight: 600;
+  padding-block: clamp(4px, 0.8vmin, 12px);
+  border-bottom: 1px solid var(--bm-line);
+}
+
+/*
+ * The clock swells by a few percent on the whole second. Small enough that
+ * nobody consciously notices it, large enough that a room can feel the
+ * seconds passing without reading the digits.
+ */
+.bm-clock {
+  font-family: var(--bm-font-display);
+  font-weight: 800;
+  font-size: clamp(36px, 11vmin, 170px);
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+  animation: bm-tick 1s steps(60, end) infinite;
+  transform-origin: center;
+  padding-block: clamp(6px, 1.4vmin, 22px);
+}
+
+.rank {
+  display: inline-grid;
+  place-items: center;
+  min-width: clamp(24px, 3.4vmin, 52px);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--bm-faint);
+}
+
+.rank--podium {
+  color: var(--q-primary);
+}
+
+.points--gain {
+  color: var(--q-positive);
+}
+
+.points--loss {
+  color: var(--q-negative);
+}
+
+.points--even {
+  color: var(--bm-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bm-clock {
+    animation: none;
+  }
 }
 </style>

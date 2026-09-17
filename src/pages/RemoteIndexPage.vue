@@ -116,7 +116,11 @@
                 dense
                 rounded
                 no-caps
-                :icon="remoteStore.slides.active ? 'stop_screen_share' : 'present_to_all'"
+                :icon="
+                  remoteStore.slides.active
+                    ? 'stop_screen_share'
+                    : 'present_to_all'
+                "
                 :label="
                   remoteStore.slides.active
                     ? t('slides.action.hide')
@@ -313,7 +317,7 @@
                   <q-btn
                     v-for="button in quizActiveButtons"
                     :key="button"
-                    :color="buzzerButtonColors[button]"
+                    :color="buzzerButtonColor[button]"
                     round
                     size="xl"
                     :outline="!selectedAnswers.has(button)"
@@ -630,8 +634,9 @@
               <div class="col-12">
                 <q-btn
                   color="negative"
-                  class="full-width text-weight-bold"
-                  push
+                  class="full-width text-weight-bold bm-danger"
+                  outline
+                  no-caps
                   icon="stop"
                   :label="t('remote.action.stopGame')"
                   @click="stopGame"
@@ -639,6 +644,27 @@
               </div>
             </div>
           </div>
+
+          <!--
+            Outside both branches on purpose: putting the scores back one step
+            is the one thing the host needs within reach whatever is on screen,
+            and a misawarded point does not wait for the right menu.
+
+            It stays enabled even when there is nothing to undo. The phone is
+            never sent the scoreboard, so it cannot know, and a button that
+            quietly does nothing beats one that is greyed out for reasons the
+            host cannot see from across the room.
+          -->
+          <q-separator class="q-my-md" />
+
+          <q-btn
+            class="full-width text-weight-bold bm-undo"
+            outline
+            no-caps
+            icon="undo"
+            :label="t('leaderboard.action.undo')"
+            @click="sendAction('leaderboardStore:undo')"
+          />
         </div>
       </q-page>
     </q-page-container>
@@ -650,6 +676,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useRemoteStore } from '@/stores/remote-store';
 import { useI18n } from 'vue-i18n';
 import type { BuzzerButton } from '@/plugins/buzzer/types';
+import { buzzerButtonColor } from '@/components/buttonColors';
 
 const { t, locale } = useI18n();
 const remoteStore = useRemoteStore();
@@ -708,20 +735,8 @@ watch(
 // Tracks which colour buttons the remote host has toggled as correct answers.
 const selectedAnswers = ref<Set<BuzzerButton>>(new Set());
 
-/**
- * Map of BuzzerButton enum values to Quasar colour names.
- * Mirrors src/components/buttonColors.ts (cannot import from remote context).
- */
-const buzzerButtonColors: Record<number, string> = {
-  0: 'red', // BuzzerButton.RED
-  1: 'blue', // BuzzerButton.BLUE
-  2: 'orange', // BuzzerButton.ORANGE
-  3: 'green', // BuzzerButton.GREEN
-  4: 'yellow', // BuzzerButton.YELLOW
-};
-
 /** Active buttons sent from host via gameSettings. Falls back to empty array. */
-const quizActiveButtons = computed<number[]>(() => {
+const quizActiveButtons = computed<BuzzerButton[]>(() => {
   return remoteStore.gameSettings?.quiz?.activeButtons ?? [];
 });
 
@@ -795,7 +810,46 @@ function sendAction(action: string, payload?: unknown) {
 </script>
 
 <style scoped>
+/*
+ * Held in one hand, in a dark room, often while walking and talking. Every
+ * control is sized for a thumb that is not looking, and labels stay in
+ * sentence case because shouting in capitals costs legibility at a glance.
+ */
 .rounded-borders {
-  border-radius: 12px;
+  border-radius: var(--bm-radius-md);
+}
+
+.q-page :deep(.q-btn) {
+  min-height: 56px;
+  border-radius: var(--bm-radius-sm);
+  font-size: var(--bm-text-md);
+  letter-spacing: 0;
+}
+
+.q-page :deep(.q-btn .q-icon) {
+  font-size: 24px;
+}
+
+.q-page :deep(.q-card) {
+  border-radius: var(--bm-radius-md);
+  background: var(--bm-surface);
+  border-color: var(--bm-line);
+}
+
+/* The name of whoever buzzed in is the one thing read from a glance. */
+.q-page :deep(.text-h4) {
+  font-family: var(--bm-font-display);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.bm-danger {
+  min-height: 48px;
+  opacity: 0.85;
+}
+
+.bm-undo {
+  min-height: 48px;
+  color: var(--bm-dim);
 }
 </style>

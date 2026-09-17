@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header>
-      <q-bar class="q-electron-drag bg-primary">
+      <q-bar class="q-electron-drag bm-titlebar">
         <q-btn
           dense
           flat
@@ -53,7 +53,7 @@
             flat
             rounded
             size="sm"
-            class="settings-button bg-primary"
+            class="settings-button"
             icon="cast"
             @click="toggleCast"
           >
@@ -70,7 +70,7 @@
             flat
             rounded
             size="sm"
-            class="settings-button bg-primary"
+            class="settings-button"
             icon="phone_iphone"
             @click="openRemoteControlSetup"
           >
@@ -85,7 +85,7 @@
             flat
             rounded
             size="sm"
-            class="settings-button bg-primary"
+            class="settings-button"
             :icon="slidesStore.active ? 'slideshow' : 'present_to_all'"
             @click="openSlidesSetup"
           >
@@ -98,7 +98,7 @@
           <div
             v-if="expandSettings"
             key="settings"
-            class="settings-container bg-white row no-wrap"
+            class="settings-container row no-wrap"
           >
             <!-- Pin -->
             <q-btn
@@ -108,7 +108,7 @@
               flat
               rounded
               size="sm"
-              class="settings-button bg-primary"
+              class="settings-button"
               :icon="pinned ? 'lock_open' : 'push_pin'"
               @click="togglePin"
             >
@@ -125,7 +125,7 @@
               flat
               rounded
               size="sm"
-              class="settings-button bg-primary"
+              class="settings-button"
               icon="developer_mode"
               @click="openDevTools"
             />
@@ -139,7 +139,7 @@
               size="sm"
               key="battery-saving"
               icon="battery_saver"
-              class="settings-button bg-primary"
+              class="settings-button"
               @click="showBatterySavingDialog"
             >
               <q-tooltip>
@@ -154,7 +154,7 @@
               flat
               rounded
               size="sm"
-              class="settings-button bg-primary"
+              class="settings-button"
               :icon="darkMode ? 'light_mode' : 'dark_mode'"
               @click="toggleDarkMode"
             >
@@ -171,7 +171,7 @@
               flat
               rounded
               size="sm"
-              class="settings-button bg-primary"
+              class="settings-button"
               icon="language"
             >
               <q-menu
@@ -199,7 +199,7 @@
               flat
               rounded
               size="sm"
-              class="settings-button bg-primary"
+              class="settings-button"
               :icon="volumeIcon"
             >
               <q-tooltip>
@@ -239,7 +239,7 @@
               flat
               rounded
               size="sm"
-              class="settings-button bg-primary"
+              class="settings-button"
             >
               <q-tooltip>
                 {{ t('toolbar.updater') }}
@@ -311,7 +311,7 @@
 
       <div
         v-if="title"
-        class="row col-shrink justify-between bg-primary text-white"
+        class="row col-shrink justify-between bm-pagebar"
       >
         <div class="col-2 row justify-start">
           <q-btn
@@ -324,7 +324,7 @@
           />
         </div>
 
-        <div class="col text-h5 text-center self-center">
+        <div class="col text-center self-center bm-pagetitle">
           {{ t(title) }}
         </div>
 
@@ -364,6 +364,7 @@ import type { GameState } from '@/../common/gameState';
 import { useGameSettingsStore } from '@/stores/game-settings-store';
 import { useCastWindowStore } from '@/stores/cast-window-store';
 import type { GameSettings } from '@/../common/gameSettings';
+import type { LeaderboardEntry } from '@/../common/gameState/LeaderboardState';
 import AppUpdateBtn from '@/components/layout/AppUpdateBtn.vue';
 import { useUpdaterStore } from '@/stores/updater-store';
 import OnlineDialog from '@/components/layout/OnlineDialog.vue';
@@ -372,6 +373,7 @@ import type { RemoteAction } from '@/../common/RemoteAPI';
 import { useRemoteStore } from '@/stores/remote-store';
 import SlidesSetupDialog from '@/components/SlidesSetupDialog.vue';
 import { useSlidesStore } from '@/stores/slides-store';
+import { useLeaderboardStore } from '@/stores/leaderboard-store';
 
 const router = useRouter();
 const route = useRoute();
@@ -383,6 +385,7 @@ const gameSettingsStore = useGameSettingsStore();
 const castWindowStore = useCastWindowStore();
 const remoteStore = useRemoteStore();
 const slidesStore = useSlidesStore();
+const leaderboardStore = useLeaderboardStore();
 
 useBatterySavingStore();
 useUpdaterStore();
@@ -518,6 +521,7 @@ onMounted(() => {
     sendGameState(gameStore.state);
     sendGameSettings(gameSettingsStore.gameSettings);
     sendControllerNames(controllerNames.value);
+    sendLeaderboard(leaderboardStore.leaderboard);
   } else if (route.query.gameWindow !== 'true') {
     quasar
       .dialog({
@@ -608,6 +612,15 @@ function sendControllerNames(controllers: Record<string, string>) {
   window.castAPI.updateControllers(toRaw(controllers));
 }
 
+/**
+ * The standings go to the cast window on their own channel, so the audience
+ * screen can show them between rounds instead of going blank whenever no game
+ * happens to be running.
+ */
+function sendLeaderboard(leaderboard: LeaderboardEntry[]) {
+  window.castAPI.updateLeaderboard(toValue(leaderboard));
+}
+
 if (quasar.platform.is.electron) {
   watch(locale, (value) => {
     const rawValue = toRaw(value);
@@ -620,16 +633,25 @@ if (quasar.platform.is.electron) {
   // Deep, as settings are also changed in place, e.g. by the result view toggle
   watch(() => gameSettingsStore.gameSettings, sendGameSettings, { deep: true });
   watch(controllerNames, sendControllerNames);
+  watch(() => leaderboardStore.leaderboard, sendLeaderboard);
 }
 
+/**
+ * Cast only. The phone is served from `game-store`, which strips the
+ * high-frequency `time` field and skips sends that would repeat the previous
+ * state. Mirroring the watcher here as well put the unstripped state on the
+ * socket on every tick of a running timer, which is the flood that
+ * deduplication exists to prevent.
+ */
 function sendGameState(state: GameState | undefined) {
-  const value = toValue(state);
-  window.castAPI.updateGameState(value);
-  if (typeof window.remoteAPI !== 'undefined') {
-    window.remoteAPI.updateGameState(value);
-  }
+  window.castAPI.updateGameState(toValue(state));
 }
 
+/**
+ * Settings, unlike state, have no second sender: this is the phone's only
+ * source for things like the quiz's active answer buttons. They change when
+ * the host opens a dialog, not on a timer, so there is nothing to throttle.
+ */
 function sendGameSettings(settings: GameSettings) {
   const value = toValue(settings);
   window.castAPI.updateGameSettings(value);
@@ -648,14 +670,45 @@ function toValue<T>(value: T): T {
 </script>
 
 <style lang="scss">
+/* ---------------------------------------------------------------------------
+   Chrome
+   ---------------------------------------------------------------------------
+   The host works here under time pressure while talking to a room, so the
+   window frame stays quiet and the accent is spent on actions instead. A
+   full-width coloured bar would be the loudest thing on a screen whose job is
+   to be scanned, not admired.
+   -------------------------------------------------------------------------- */
+
+.bm-titlebar {
+  background: var(--bm-surface);
+  color: var(--bm-dim);
+  border-bottom: 1px solid var(--bm-line);
+}
+
+.bm-pagebar {
+  background: var(--bm-ground);
+  color: var(--bm-ink);
+  border-bottom: 1px solid var(--bm-line);
+  padding-bottom: var(--bm-space-2);
+}
+
+.bm-pagetitle {
+  font-family: var(--bm-font-display);
+  font-size: var(--bm-text-lg);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
 /* Settings menu */
 .settings-container {
   padding: 2px;
   border-radius: 20px;
+  background: var(--bm-raised);
 }
 
 .settings-button {
   margin: 0 2px;
+  color: var(--bm-dim);
 }
 
 /* Animations */

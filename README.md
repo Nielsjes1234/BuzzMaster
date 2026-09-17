@@ -4,7 +4,7 @@ BuzzMaster is a user-friendly application for hosting quiz shows with physical i
 
 ## Online Version
 
-The online version of BuzzMaster can be found [here](https://marvin-wtt.github.io/BuzzMaster/#/).
+The online version of BuzzMaster can be found [here](https://Nielsjes1234.github.io/BuzzMaster/#/).
 Some features might not be available in the online version.
 
 ## Key Features
@@ -89,3 +89,6 @@ Please refer to the [LICENCE](LICENCE) file for licensing information.
 ## Credits
 
 Logo designed by drawingfreddie
+
+BuzzMaster was originally created by [marvin-wtt](https://github.com/marvin-wtt).
+This repository continues that work as an independent project and remains MIT licensed.

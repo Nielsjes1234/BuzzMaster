@@ -1,0 +1,217 @@
+// BuzzMaster design tokens
+// ---------------------------------------------------------------------------
+// One source of truth for colour, shape, depth and rhythm. Light and dark are
+// designed as two separate palettes rather than one inverted into the other,
+// so neither theme inherits the other's contrast problems.
+//
+// Quasar's own brand colours are re-declared here as CSS custom properties
+// (--q-primary and friends). That is deliberate: the SCSS variables in
+// quasar.variables.scss are compiled once and cannot differ per theme, while
+// these can, which is what lets the accent shift between light and dark.
+
+:root {
+  /* -- surfaces, light ---------------------------------------------------- */
+  --bm-ground: #f4f5f7;
+  --bm-surface: #ffffff;
+  --bm-raised: #eceef2;
+  --bm-line: #dde1e8;
+  --bm-line-strong: #c6ccd6;
+
+  /* -- text, light -------------------------------------------------------- */
+  --bm-ink: #14171c;
+  --bm-dim: #545c68;
+  --bm-faint: #8a93a0;
+
+  /* -- buzzer buttons ------------------------------------------------------
+     These five are not a style choice: they name the physical buttons under
+     the players' thumbs. A player who says "I pressed yellow" has to see the
+     same yellow the host sees, so they are identical in light and dark and are
+     never redefined per theme. Each carries the ink that reads on top of it,
+     because white on yellow is unreadable and black on red is worse.
+
+     They are picked to hold up on both the near-black and the near-white
+     ground, which rules out both the pastel and the neon end of each hue. */
+  --bm-buzz-red: #e5383b;
+  --bm-buzz-red-ink: #ffffff;
+
+  --bm-buzz-blue: #2b7fd9;
+  --bm-buzz-blue-ink: #ffffff;
+
+  --bm-buzz-orange: #f08a24;
+  --bm-buzz-orange-ink: #1a1205;
+
+  --bm-buzz-green: #2fa84f;
+  --bm-buzz-green-ink: #ffffff;
+
+  --bm-buzz-yellow: #f0c21b;
+  --bm-buzz-yellow-ink: #1a1505;
+
+  /* "No answer" in the quiz results. Neutral rather than a sixth colour, so it
+     never competes with a real answer. */
+  --bm-buzz-none: #8a93a0;
+  --bm-buzz-none-ink: #ffffff;
+
+  /* -- Quasar brand colours, light ---------------------------------------- */
+  --q-primary: #5a46e8;
+  --q-secondary: #5c6b84;
+  --q-accent: #0e9ba8;
+  --q-positive: #1b9e58;
+  --q-negative: #d62b43;
+  --q-info: #2e7fd4;
+  --q-warning: #c87a0a;
+
+  /* -- shape --------------------------------------------------------------
+     Four steps. A radius means "this is a distinct object"; using one value
+     everywhere flattens the hierarchy instead of building it. */
+  --bm-radius-xs: 6px;
+  --bm-radius-sm: 10px;
+  --bm-radius-md: 14px;
+  --bm-radius-lg: 20px;
+
+  /* -- depth --------------------------------------------------------------
+     Three levels, no more. What floats is actionable, what recedes is
+     context. Shadows are cooler and deeper in dark mode, where a soft grey
+     glow reads as fog rather than elevation. */
+  --bm-shadow-1: 0 1px 2px rgb(20 23 28 / 0.06), 0 1px 1px rgb(20 23 28 / 0.04);
+  --bm-shadow-2: 0 4px 12px -2px rgb(20 23 28 / 0.1), 0 2px 4px -2px rgb(20 23 28 / 0.06);
+  --bm-shadow-3: 0 16px 32px -8px rgb(20 23 28 / 0.16), 0 4px 10px -4px rgb(20 23 28 / 0.08);
+
+  /* -- rhythm -------------------------------------------------------------
+     A 4px base. Everything that touches spacing picks a step from this. */
+  --bm-space-1: 4px;
+  --bm-space-2: 8px;
+  --bm-space-3: 12px;
+  --bm-space-4: 16px;
+  --bm-space-5: 24px;
+  --bm-space-6: 32px;
+  --bm-space-7: 48px;
+
+  /* -- type ---------------------------------------------------------------
+     Inter carries everything that is read or operated; Archivo carries names,
+     headings and numbers, and is the only face on the cast screen large
+     enough to be read from across a room. */
+  --bm-font-ui:
+    'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --bm-font-display:
+    'Archivo Variable', 'Archivo', 'Inter Variable', 'Arial Narrow', sans-serif;
+
+  --bm-text-xs: 11px;
+  --bm-text-sm: 13px;
+  --bm-text-md: 15px;
+  --bm-text-lg: 20px;
+  --bm-text-xl: 26px;
+  --bm-text-2xl: 34px;
+  --bm-text-3xl: 48px;
+
+  /* -- motion -------------------------------------------------------------
+     Controls answer within 200ms; anything slower reads as lag. The cast
+     screen is the deliberate exception and sets its own, longer timings,
+     because a leaderboard paging past an audience is broadcast, not UI. */
+  --bm-ease: cubic-bezier(0.2, 0, 0.1, 1);
+  --bm-duration-fast: 120ms;
+  --bm-duration: 180ms;
+}
+
+body.body--dark {
+  /* -- surfaces, dark ----------------------------------------------------- */
+  --bm-ground: #0e1014;
+  --bm-surface: #171a20;
+  --bm-raised: #1f242c;
+  --bm-line: #2b313b;
+  --bm-line-strong: #3b414d;
+
+  /* -- text, dark --------------------------------------------------------- */
+  --bm-ink: #eef1f6;
+  --bm-dim: #9aa4b2;
+  --bm-faint: #67717f;
+
+  --bm-buzz-none: #6c7683;
+
+  /* -- Quasar brand colours, dark ----------------------------------------- */
+  --q-primary: #6e5bff;
+  --q-secondary: #8494ac;
+  --q-accent: #2cc5d2;
+  --q-positive: #2fbf71;
+  --q-negative: #f0455a;
+  --q-info: #4fa2f0;
+  --q-warning: #f0a93c;
+
+  /* -- depth, dark -------------------------------------------------------- */
+  --bm-shadow-1: 0 1px 2px rgb(0 0 0 / 0.5);
+  --bm-shadow-2: 0 4px 14px -2px rgb(0 0 0 / 0.6);
+  --bm-shadow-3: 0 18px 36px -10px rgb(0 0 0 / 0.7);
+}
+
+/* ---------------------------------------------------------------------------
+   Buzzer colour classes
+   ---------------------------------------------------------------------------
+   Quasar turns `color="buzz-red"` into `bg-buzz-red` on filled controls and
+   `text-buzz-red` on flat and outlined ones, so both shapes exist here. The
+   background rule also sets the text colour, which is what stops Quasar's
+   automatic `text-white` from putting white on yellow.
+   -------------------------------------------------------------------------- */
+
+$buzz-colors: 'red', 'blue', 'orange', 'green', 'yellow', 'none';
+
+@each $name in $buzz-colors {
+  // The class is repeated to raise specificity above Quasar's own
+  // `.text-white`, which it adds automatically to any filled button. Without
+  // this the rule would depend on stylesheet order, and white on yellow would
+  // come back the first time the bundler changed its mind.
+  .bg-buzz-#{$name}.bg-buzz-#{$name} {
+    background: var(--bm-buzz-#{$name}) !important;
+    color: var(--bm-buzz-#{$name}-ink) !important;
+  }
+
+  .text-buzz-#{$name}.text-buzz-#{$name} {
+    color: var(--bm-buzz-#{$name}) !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Shared motion
+   ---------------------------------------------------------------------------
+   Named once so every surface animates in the same language. Durations stay
+   under the threshold where movement starts reading as delay, except on the
+   cast screen, which sets its own longer staging timings locally.
+   -------------------------------------------------------------------------- */
+
+@keyframes bm-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes bm-pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+
+  62% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bm-tick {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  18% {
+    transform: scale(1.035);
+  }
+}

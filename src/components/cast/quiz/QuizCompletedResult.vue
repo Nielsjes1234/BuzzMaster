@@ -58,22 +58,24 @@ const symbolWidth = computed<number>(() => {
 
 const pointsClass = computed<string>(() => {
   if (props.points > 0) {
-    return 'text-green';
+    return 'points--gain';
   }
 
   if (props.points < 0) {
-    return 'text-red';
+    return 'points--loss';
   }
 
-  return 'text-blue';
+  return 'points--even';
 });
 
+// Shared with every other place a buzzer colour appears; see
+// src/css/tokens.scss.
 const buzzerButtonBgColor = {
-  [BuzzerButton.BLUE]: 'bg-blue',
-  [BuzzerButton.ORANGE]: 'bg-orange',
-  [BuzzerButton.GREEN]: 'bg-green',
-  [BuzzerButton.YELLOW]: 'bg-yellow',
-  [BuzzerButton.RED]: 'bg-grey',
+  [BuzzerButton.BLUE]: 'bg-buzz-blue',
+  [BuzzerButton.ORANGE]: 'bg-buzz-orange',
+  [BuzzerButton.GREEN]: 'bg-buzz-green',
+  [BuzzerButton.YELLOW]: 'bg-buzz-yellow',
+  [BuzzerButton.RED]: 'bg-buzz-none',
 };
 </script>
 
@@ -97,14 +99,48 @@ const buzzerButtonBgColor = {
 
 /* Font sizes scale with the cast window, which is often only a few hundred pixels wide */
 .points {
+  font-family: var(--bm-font-display);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
   font-size: clamp(1.75rem, 10vw, 3.75rem);
   line-height: 1.2;
+}
+
+.points--gain {
+  color: var(--q-positive);
+}
+
+.points--loss {
+  color: var(--q-negative);
+}
+
+.points--even {
+  color: var(--bm-dim);
 }
 
 .result-item {
   width: clamp(1.5rem, 5vw, 3.125rem);
   aspect-ratio: 1;
   border-radius: 50%;
+  animation: bm-pop-in 420ms var(--bm-ease) both;
+}
+
+.result-item:nth-child(2) {
+  animation-delay: 90ms;
+}
+
+.result-item:nth-child(3) {
+  animation-delay: 180ms;
+}
+
+.result-item:nth-child(4) {
+  animation-delay: 270ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .result-item {
+    animation: none;
+  }
 }
 
 .slide-move,
