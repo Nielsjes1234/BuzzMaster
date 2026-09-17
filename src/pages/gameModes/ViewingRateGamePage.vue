@@ -196,6 +196,11 @@ import { type ButtonEvent, BuzzerButton } from '@/plugins/buzzer/types';
 import TimerAnimated from '@/components/TimerAnimated.vue';
 import SafeDeleteBtn from '@/components/SafeDeleteBtn.vue';
 import ViewingRateResultItem from '@/components/gameModes/viewingRate/ViewingRateResultItem.vue';
+import {
+  currentlyViewingShare,
+  isViewing,
+  totalViewingRate,
+} from '@/components/gameModes/viewingRate/viewingRate';
 import { useQuasar } from 'quasar';
 import ViewingRateSettingsDialog from '@/components/gameModes/viewingRate/ViewingRateSettingsDialog.vue';
 
@@ -232,11 +237,10 @@ const totalWatchRate = computed<number>(() => {
     return 0;
   }
 
-  return (
-    Object.values(gameState.value.changeTimes)
-      .map((changes) => controllerViewingRate(changes, time.value))
-      .reduce((acc, viewingRate) => acc + viewingRate, 0) /
-    Object.keys(gameState.value.changeTimes).length
+  return totalViewingRate(
+    gameState.value.changeTimes,
+    time.value,
+    settings.value.startViewing,
   );
 });
 
@@ -247,7 +251,9 @@ const currentlyViewingControllers = computed<number>(() => {
 
   const values = Object.values(gameState.value.changeTimes);
 
-  return values.filter(controllerWatchStatus).length;
+  return values.filter((changes) =>
+    isViewing(changes, settings.value.startViewing),
+  ).length;
 });
 
 const totalControllers = computed<number>(() => {
@@ -265,30 +271,11 @@ const currentlyViewing = computed<number>(() => {
     return 0;
   }
 
-  const values = Object.values(gameState.value.changeTimes);
-
-  return values.filter(controllerWatchStatus).length / values.length;
+  return currentlyViewingShare(
+    gameState.value.changeTimes,
+    settings.value.startViewing,
+  );
 });
-
-const controllerViewingRate = (changes: number[], time: number) => {
-  let totalWatchTime = 0;
-  let watching = settings.value.startViewing;
-  let prevTime = 0;
-  for (const changeTime of changes) {
-    if (watching) {
-      totalWatchTime += changeTime - prevTime;
-    }
-
-    watching = !watching;
-    prevTime = changeTime;
-  }
-
-  if (watching) {
-    totalWatchTime += time - prevTime;
-  }
-
-  return totalWatchTime / time;
-};
 
 const readyCheckDone = computed<boolean>(() => {
   if (gameState.value.name !== 'preparing') {
@@ -411,17 +398,14 @@ const stop = transition('running', (state) => {
   };
 });
 
-const controllerWatchStatus = (changes: number[]): boolean => {
-  const viewingMod = settings.value.startViewing ? 0 : 1;
-
-  return changes.length % 2 === viewingMod;
-};
-
 const isControllerViewing = (
   state: ViewingRateRunningState,
   controllerId: string,
 ): boolean => {
-  return controllerWatchStatus(state.changeTimes[controllerId] ?? []);
+  return isViewing(
+    state.changeTimes[controllerId] ?? [],
+    settings.value.startViewing,
+  );
 };
 
 const listener = (event: ButtonEvent) => {

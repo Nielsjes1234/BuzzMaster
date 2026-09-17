@@ -10,7 +10,7 @@
         v-for="section in sections"
         :key="section.key"
       >
-        <div class="section-header full-width text-h5">
+        <div class="section-header full-width bm-label">
           {{ section.label }}
         </div>
         <div class="row q-gutter-sm">
@@ -23,9 +23,10 @@
               :to="{ name: item.routeName }"
               :label="item.label"
               :icon="item.icon"
-              color="primary"
-              rounded
+              unelevated
+              no-caps
               stack
+              class="mode-tile"
             />
           </div>
           <div
@@ -112,8 +113,41 @@ const sections = computed<MenuSection[]>(() => [
 </script>
 
 <style scoped>
+/*
+ * Sections are separated by a label and space rather than by a rule across the
+ * whole width: at this window size a horizontal line reads as a divider
+ * between unrelated things, which these are not.
+ */
 .section-header {
-  border-bottom: 1px solid;
-  margin-bottom: 1em;
+  margin-bottom: var(--bm-space-3);
+}
+
+.mode-tile {
+  width: 100%;
+  padding: var(--bm-space-4) var(--bm-space-2);
+  border-radius: var(--bm-radius-md);
+  background: var(--bm-surface);
+  border: 1px solid var(--bm-line);
+  color: var(--bm-ink);
+  font-weight: 600;
+  transition:
+    border-color var(--bm-duration) var(--bm-ease),
+    transform var(--bm-duration-fast) var(--bm-ease),
+    box-shadow var(--bm-duration) var(--bm-ease);
+}
+
+.mode-tile:hover {
+  border-color: var(--q-primary);
+  box-shadow: var(--bm-shadow-2);
+}
+
+.mode-tile:active {
+  transform: translateY(1px);
+}
+
+.mode-tile :deep(.q-icon) {
+  font-size: 26px;
+  color: var(--q-primary);
+  margin-bottom: var(--bm-space-1);
 }
 </style>

@@ -5,6 +5,7 @@ export default {
 
   action: {
     reset: 'Resetear',
+    undo: 'Deshacer',
     ok: 'Ok',
   },
 

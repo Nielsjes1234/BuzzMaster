@@ -4,7 +4,7 @@
     <div class="col-12 row justify-center">
       <div class="col-12 self-center text-center justify-center">
         <pulse-circle
-          class="column justify-center q-col-gutter-sm text-h3"
+          class="column justify-center q-col-gutter-sm bm-cast-display bm-go"
           pulse
         >
           {{ t('cast.buzzer.running.go') }}
@@ -21,4 +21,10 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 </script>
 
-<style scoped></style>
+<style scoped>
+.bm-go {
+  font-family: var(--bm-font-display);
+  font-size: clamp(32px, 9vmin, 160px);
+  color: var(--q-primary);
+}
+</style>

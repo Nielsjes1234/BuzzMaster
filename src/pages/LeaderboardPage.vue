@@ -20,23 +20,25 @@
           :key="entry.id"
           clickable
           v-ripple
+          class="lb-row"
+          :class="{ 'lb-row--lead': entry.position === 1 }"
           @click="showUpdatePoints(entry)"
         >
-          <q-item-section avatar>
-            <q-avatar
-              :color="avatarColor(entry.position)"
-              text-color="white"
-              size="sm"
-            >
-              {{ entry.position }}
-            </q-avatar>
+          <q-item-section
+            avatar
+            class="lb-pos"
+          >
+            {{ entry.position }}
           </q-item-section>
 
-          <q-item-section class="ellipsis">
+          <q-item-section class="ellipsis lb-name">
             {{ entry.name }}
           </q-item-section>
 
-          <q-item-section side>
+          <q-item-section
+            side
+            class="lb-value"
+          >
             {{ entry.value }}
           </q-item-section>
         </q-item>
@@ -46,11 +48,28 @@
         class="col-grow column justify-around"
         style="max-height: 300px"
       >
-        <div class="row justify-center">
+        <div class="row justify-center q-gutter-sm">
+          <!--
+            Undo sits next to reset because they are the two ways out of a
+            mistake, but it is the quiet one: it is reached for far more often
+            and costs nothing, so it gets no colour and no alarm.
+          -->
+          <q-btn
+            :label="t('leaderboard.action.undo')"
+            icon="undo"
+            flat
+            no-caps
+            :disable="!leaderboardStore.canUndo"
+            class="lb-undo"
+            @click="leaderboardStore.undo()"
+          />
+
           <q-btn
             :label="t('leaderboard.action.reset')"
-            color="primary"
-            rounded
+            flat
+            no-caps
+            color="negative"
+            class="lb-reset"
             @click="showResetPoints()"
           />
         </div>
@@ -88,19 +107,49 @@ watch(
     };
   }),
 );
-
-const avatarColor = (index: number) => {
-  switch (index) {
-    case 1:
-      return 'primary';
-    case 2:
-      return 'secondary';
-    case 3:
-      return 'info';
-  }
-
-  return 'grey';
-};
 </script>
 
-<style scoped></style>
+<style scoped>
+/*
+ * Echoes the cast leaderboard so the host recognises the same object in both
+ * places, at desk scale rather than room scale.
+ */
+.lb-row {
+  border-radius: var(--bm-radius-sm);
+  min-height: 52px;
+}
+
+.lb-pos {
+  min-width: 34px;
+  font-family: var(--bm-font-display);
+  font-weight: 700;
+  font-size: var(--bm-text-sm);
+  color: var(--bm-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.lb-name {
+  font-size: var(--bm-text-md);
+  font-weight: 500;
+}
+
+.lb-value {
+  font-family: var(--bm-font-display);
+  font-weight: 800;
+  font-size: var(--bm-text-lg);
+  font-variant-numeric: tabular-nums;
+}
+
+.lb-row--lead .lb-pos {
+  color: var(--q-primary);
+}
+
+.lb-row--lead .lb-name {
+  font-weight: 700;
+}
+
+.lb-reset,
+.lb-undo {
+  font-weight: 600;
+}
+</style>

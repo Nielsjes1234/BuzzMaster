@@ -146,4 +146,35 @@ describe('RemoteIndexPage', () => {
       undefined,
     );
   });
+
+  it('can undo the last points from the phone, whatever is on screen', async () => {
+    const wrapper = mountPage();
+    const store = useRemoteStore();
+
+    store.isConnected = true;
+    store.gameState = undefined;
+    await wrapper.vm.$nextTick();
+
+    const undoBtn = wrapper
+      .findAll('button')
+      .find((button) => button.text().includes('leaderboard.action.undo'));
+    expect(undoBtn).toBeDefined();
+    await undoBtn?.trigger('click');
+
+    expect(store.sendRemoteAction).toHaveBeenCalledWith(
+      'leaderboardStore:undo',
+      undefined,
+    );
+  });
+
+  it('keeps the undo within reach while a game is running', async () => {
+    const wrapper = mountPage();
+    const store = useRemoteStore();
+
+    store.isConnected = true;
+    store.gameState = { game: 'quiz', name: 'preparing' } as GameState;
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.text()).toContain('leaderboard.action.undo');
+  });
 });

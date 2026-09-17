@@ -6,7 +6,7 @@
   >
     <q-list
       ref="container"
-      class="col-grow text-h4 relative-position"
+      class="col-grow relative-position bm-cast-panel"
     >
       <transition name="slide-right">
         <!-- This is a workaround because transition group animation always animated single entries instead if the entire page -->
@@ -125,6 +125,11 @@ body {
 </style>
 
 <style scoped>
+/*
+ * Two seconds is far slower than an interface should ever be, and deliberately
+ * so: this is a leaderboard paging in front of an audience, not a control
+ * responding to a click. Interface timings live in the design tokens.
+ */
 .slide-right-enter-active {
   transition: all 2s ease-out;
 }
@@ -142,5 +147,18 @@ body {
 .slide-right-leave-to {
   opacity: 0;
   transform: translateY(-100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide-right-enter-active,
+  .slide-right-leave-active {
+    transition: none;
+  }
+
+  .slide-right-enter-from,
+  .slide-right-leave-to {
+    opacity: 1;
+    transform: none;
+  }
 }
 </style>

@@ -5,6 +5,7 @@ export default {
 
   action: {
     reset: 'Reset',
+    undo: 'Undo',
     ok: 'Ok',
   },
 
