@@ -36,6 +36,13 @@ The feature is available for a controller after the first button press.
 
 A mobile-friendly companion app that allows the host to control the game (start rounds, manage points, and reset buzzers) while walking around. The app connects over the local network and is secured by a dynamic 4-digit PIN.
 
+### Google Slides Presentation
+
+Runs a Google Slides deck in its own window next to the cast screen, so the questions and the scores share the projector.
+The presentation window can be moved and resized freely, and the cast window floats over it, keeping the leaderboard readable on top of the slides.
+Slides are advanced from the remote control, which can also black out the presentation between rounds without losing the current slide.
+The presentation needs to be shared with anyone who has the link.
+
 ## Installation
 
 > [!Note]

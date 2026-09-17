@@ -58,6 +58,7 @@
         </q-btn>
       </q-bar>
     </q-header>
+
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -69,6 +70,7 @@ import { useCastStore } from '@/stores/cast-store';
 import { useQuasar } from 'quasar';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import type { SlidesState } from '@/../common/SlidesAPI';
 
 const castStore = useCastStore();
 const quasar = useQuasar();
@@ -86,8 +88,36 @@ const showAppBar = ref<boolean>(true);
 const transparent = ref<boolean>(false);
 const mouseOverMenu = ref<boolean>(false);
 
+/* -------------------------------------------------------------------------
+ * Google Slides presentation
+ * ---------------------------------------------------------------------- */
+
+const slidesActive = ref<boolean>(false);
+
+if (window.slidesAPI !== undefined) {
+  window.slidesAPI.onStateChange(applySlidesState);
+  window.slidesAPI
+    .getState()
+    .then(applySlidesState)
+    .catch((reason: unknown) => {
+      console.error(reason);
+    });
+}
+
+function applySlidesState(state: SlidesState) {
+  slidesActive.value = state.active;
+}
+
+/* ---------------------------------------------------------------------- */
+
 const layoutClass = computed<string | undefined>(() => {
-  return transparent.value ? undefined : 'layout';
+  // While a presentation is running the window has to stay see-through, so the
+  // slides underneath remain visible behind the leaderboard.
+  if (transparent.value || slidesActive.value) {
+    return undefined;
+  }
+
+  return 'layout';
 });
 
 const darkMode = computed<boolean>(() => {
@@ -96,7 +126,10 @@ const darkMode = computed<boolean>(() => {
 
 function onFocus() {
   showAppBar.value = true;
-  transparent.value = false;
+
+  if (!slidesActive.value) {
+    transparent.value = false;
+  }
 }
 
 function onBlur() {
@@ -146,4 +179,5 @@ body.body--dark .layout {
 .layout:focus {
   box-shadow: inset 0 0 0 1px gray;
 }
+
 </style>

@@ -8,8 +8,12 @@ import {
 import log from 'electron-log';
 
 type CastWindowFactory = () => Promise<BrowserWindow>;
+type CastWindowListener = (window: BrowserWindow | undefined) => void;
 
-export default (windowFactory: CastWindowFactory) => {
+export default (
+  windowFactory: CastWindowFactory,
+  onCastWindowChange?: CastWindowListener,
+) => {
   ipcMain.on('cast:ready', ready);
   ipcMain.on('cast:toggle', toggle);
   ipcMain.handle('cast:isOpen', isOpen);
@@ -53,8 +57,10 @@ export default (windowFactory: CastWindowFactory) => {
         castWindow = window;
         window.on('closed', () => {
           notifyHost(false);
+          onCastWindowChange?.(undefined);
         });
         notifyHost(true);
+        onCastWindowChange?.(window);
       })
       .catch((reason) => {
         log.error(`Failed to create cast window: ${reason}`);

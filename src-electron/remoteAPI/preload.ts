@@ -11,6 +11,7 @@ const senderAPI: RemoteSenderAPI = {
   updateGameSettings: (settings) =>
     ipcRenderer.send('remote:updateGameSettings', settings),
   updateLocale: (locale) => ipcRenderer.send('remote:updateLocale', locale),
+  updateSlides: (state) => ipcRenderer.send('remote:updateSlides', state),
 };
 
 const receiverAPI: RemoteReceiverAPI = {

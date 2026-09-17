@@ -10,6 +10,7 @@ export default {
   mute: 'Geluid dempen',
   unmute: 'Geluid aanzetten',
   pin: 'Venster vastzetten',
+  slides: 'Presentatie',
   settings: 'Instellingen in-/uitschakelen',
   unpin: 'Venster losmaken',
   updater: 'Zoeken naar updates',

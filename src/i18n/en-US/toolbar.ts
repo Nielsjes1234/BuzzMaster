@@ -10,6 +10,7 @@ export default {
   mute: 'Mute sound',
   unmute: 'Unmute sound',
   pin: 'Pin window to stay on top',
+  slides: 'Presentation',
   settings: 'Toggle Settings',
   unpin: 'Unpin window',
   updater: 'Check for updates',

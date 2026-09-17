@@ -7,6 +7,7 @@ import online from './online';
 import toolbar from './toolbar';
 import updater from './updater';
 import remote from './remote';
+import slides from './slides';
 
 export default {
   app_name: 'BuzzMaster',
@@ -32,4 +33,5 @@ export default {
   toolbar,
   updater,
   remote,
+  slides,
 };

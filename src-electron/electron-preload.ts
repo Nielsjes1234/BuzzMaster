@@ -33,8 +33,10 @@ import windowAPI from './windowAPI/preload';
 import appAPI from './appAPI/preload';
 import castAPI from './castAPI/preload';
 import remoteAPI from './remoteAPI/preload';
+import slidesAPI from './slidesAPI/preload';
 
 contextBridge.exposeInMainWorld('windowAPI', windowAPI);
 contextBridge.exposeInMainWorld('appAPI', appAPI);
 contextBridge.exposeInMainWorld('castAPI', castAPI);
 contextBridge.exposeInMainWorld('remoteAPI', remoteAPI);
+contextBridge.exposeInMainWorld('slidesAPI', slidesAPI);

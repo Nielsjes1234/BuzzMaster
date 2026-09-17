@@ -37,4 +37,5 @@ export default () => {
   ipcMain.on('remote:updateGameState', forwardToRemote('gameState'));
   ipcMain.on('remote:updateGameSettings', forwardToRemote('gameSettings'));
   ipcMain.on('remote:updateLocale', forwardToRemote('locale'));
+  ipcMain.on('remote:updateSlides', forwardToRemote('slides'));
 };

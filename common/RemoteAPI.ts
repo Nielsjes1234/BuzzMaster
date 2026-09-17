@@ -1,5 +1,6 @@
 import type { GameState } from '@/../common/gameState';
 import type { GameSettings } from '@/../common/gameSettings';
+import type { SlidesState } from '@/../common/SlidesAPI';
 
 export interface RemoteServerInfo {
   ip: string;
@@ -19,6 +20,7 @@ export interface RemoteSenderAPI {
   updateGameState: (state: GameState | undefined) => void;
   updateGameSettings: (settings: GameSettings) => void;
   updateLocale: (locale: string) => void;
+  updateSlides: (state: SlidesState) => void;
 }
 
 type Callback<F> = (callback: F) => void;
