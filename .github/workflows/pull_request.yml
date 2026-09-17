@@ -17,22 +17,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
           node-version: '24'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Install electron dependencies
-        run: npm ci --prefix src-electron
+        run: pnpm install --frozen-lockfile --dir src-electron
 
       - name: Run Prettier
-        run: npm run format:check
+        run: pnpm run format:check
 
       - name: Run Lint
-        run: npm run lint
+        run: pnpm run lint
 
   lint:
     name: Lint
@@ -42,19 +45,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Install electron dependencies
-        run: npm ci --prefix src-electron
+        run: pnpm install --frozen-lockfile --dir src-electron
 
       - name: Run Lint
-        run: npm run lint
+        run: pnpm run lint
 
   test:
     name: Test
@@ -64,16 +70,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Test
-        run: npm run test:unit:ci
+        run: pnpm run test:unit:ci
 
   build:
     name: Build
@@ -83,13 +92,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
           node-version: '24'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: npm run build
+        run: pnpm run build

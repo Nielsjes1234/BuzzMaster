@@ -67,15 +67,15 @@ Follow these steps to update the driver manually:
 ## Development
 
 ```sh
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 Build executable for production:
 
 ```sh
-npm ci
-npm run build
+pnpm install --frozen-lockfile
+pnpm build
 ```
 
 ## Contributing
