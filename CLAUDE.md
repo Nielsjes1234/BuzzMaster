@@ -5,20 +5,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```sh
-npm run dev          # Start Electron app in development mode
-npm run build        # Build Electron app for production
-npm run lint         # ESLint (src*/**/*.{ts,js,cjs,mjs,vue})
-npm run format       # Prettier (write)
-npm run format:check # Prettier (check only)
-npm run test:unit    # Run vitest in watch mode
-npm run test:unit:ci # Run vitest once (CI)
-npm run test:unit:ui # Run vitest with UI
+pnpm dev          # Start Electron app in development mode
+pnpm build        # Build Electron app for production
+pnpm lint         # ESLint (src*/**/*.{ts,js,cjs,mjs,vue})
+pnpm format       # Prettier (write)
+pnpm format:check # Prettier (check only)
+pnpm test:unit    # Run vitest in watch mode
+pnpm test:unit:ci # Run vitest once (CI)
+pnpm test:unit:ui # Run vitest with UI
 ```
 
 To run a single test file:
 
 ```sh
-npx vitest run test/vitest/__tests__/BuzzerPage.test.ts
+pnpm exec vitest run test/vitest/__tests__/BuzzerPage.test.ts
 ```
 
 ## Architecture
