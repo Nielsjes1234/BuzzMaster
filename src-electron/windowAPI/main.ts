@@ -14,6 +14,7 @@ export default () => {
   ipcMain.on('window:unpin', windowApiHandler.unpin);
   ipcMain.on('window:mute', windowApiHandler.mute);
   ipcMain.on('window:unmute', windowApiHandler.unmute);
+  ipcMain.on('window:invalidate', windowApiHandler.invalidate);
   ipcMain.on('window:open-dev-tools', windowApiHandler.openDevTools);
 };
 
@@ -62,6 +63,10 @@ const windowApiHandler: Handler = {
 
   unmute: windowEventWrapper((win: BrowserWindow) => {
     win.webContents.setAudioMuted(false);
+  }),
+
+  invalidate: windowEventWrapper((win: BrowserWindow) => {
+    win.webContents.invalidate();
   }),
 
   openDevTools: windowEventWrapper((win: BrowserWindow) => {

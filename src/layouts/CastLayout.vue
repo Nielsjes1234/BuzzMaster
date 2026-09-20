@@ -1,9 +1,13 @@
 <template>
   <q-layout
-    @focus="onFocus"
-    @blur="onBlur"
     view="hHh Lpr fFf"
-    :class="[layoutClass, slidesActive ? 'cast-over-slides' : undefined]"
+    :class="[
+      effectiveTransparency
+        ? 'cast-surface--transparent'
+        : 'cast-surface--opaque',
+      slidesActive ? 'cast-over-slides' : undefined,
+      windowFocused ? 'cast-window--focused' : undefined,
+    ]"
   >
     <q-header
       v-if="showAppBar"
@@ -36,8 +40,9 @@
           dense
           flat
           round
-          icon="visibility_off"
-          @click.stop="setTransparent"
+          :icon="transparent ? 'visibility' : 'visibility_off'"
+          :aria-pressed="transparent"
+          @click.stop="toggleTransparency"
         >
           <q-tooltip :delay="1000">
             {{ t('cast.toolbar.transparent') }}
@@ -75,9 +80,17 @@
 <script lang="ts" setup>
 import { useCastStore } from '@/stores/cast-store';
 import { useQuasar } from 'quasar';
-import { computed, ref } from 'vue';
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { SlidesState } from '@/../common/SlidesAPI';
+import { castIsTransparent } from '@/components/cast/castAppearance';
 
 const castStore = useCastStore();
 const quasar = useQuasar();
@@ -95,6 +108,7 @@ window.castAPI.onLeaderboardUpdate(castStore.updateLeaderboard);
 const showAppBar = ref<boolean>(true);
 const transparent = ref<boolean>(false);
 const mouseOverMenu = ref<boolean>(false);
+const windowFocused = ref<boolean>(document.hasFocus());
 
 /* -------------------------------------------------------------------------
  * Google Slides presentation
@@ -118,29 +132,22 @@ function applySlidesState(state: SlidesState) {
 
 /* ---------------------------------------------------------------------- */
 
-const layoutClass = computed<string | undefined>(() => {
-  // While a presentation is running the window has to stay see-through, so the
-  // slides underneath remain visible behind the leaderboard.
-  if (transparent.value || slidesActive.value) {
-    return undefined;
-  }
-
-  return 'layout';
-});
+const effectiveTransparency = computed<boolean>(() =>
+  castIsTransparent(transparent.value, slidesActive.value),
+);
 
 const darkMode = computed<boolean>(() => {
   return quasar.dark.isActive;
 });
 
 function onFocus() {
+  windowFocused.value = true;
   showAppBar.value = true;
-
-  if (!slidesActive.value) {
-    transparent.value = false;
-  }
 }
 
 function onBlur() {
+  windowFocused.value = false;
+
   if (mouseOverMenu.value) {
     return;
   }
@@ -159,27 +166,86 @@ function closeWindow() {
   window.windowAPI.close();
 }
 
-function setTransparent() {
-  transparent.value = true;
-  showAppBar.value = false;
+function toggleTransparency() {
+  transparent.value = !transparent.value;
+
+  if (transparent.value) {
+    showAppBar.value = false;
+  }
 }
+
+let repaintFrame: number | undefined;
+let unmounted = false;
+
+function scheduleRepaint() {
+  void nextTick().then(() => {
+    if (unmounted) {
+      return;
+    }
+
+    if (repaintFrame !== undefined) {
+      window.cancelAnimationFrame(repaintFrame);
+    }
+
+    repaintFrame = window.requestAnimationFrame(() => {
+      repaintFrame = undefined;
+      window.windowAPI.invalidate();
+    });
+  });
+}
+
+watch(
+  effectiveTransparency,
+  (value) => {
+    document.documentElement.classList.toggle('cast-root--transparent', value);
+    document.body.classList.toggle('cast-root--transparent', value);
+    document.body.classList.toggle('cast-root--opaque', !value);
+    scheduleRepaint();
+  },
+  { immediate: true },
+);
+
+watch(darkMode, scheduleRepaint);
+
+onMounted(() => {
+  window.addEventListener('focus', onFocus);
+  window.addEventListener('blur', onBlur);
+});
+
+onBeforeUnmount(() => {
+  unmounted = true;
+  window.removeEventListener('focus', onFocus);
+  window.removeEventListener('blur', onBlur);
+
+  if (repaintFrame !== undefined) {
+    window.cancelAnimationFrame(repaintFrame);
+  }
+
+  document.documentElement.classList.remove('cast-root--transparent');
+  document.body.classList.remove('cast-root--transparent', 'cast-root--opaque');
+});
 </script>
 
 <style>
-body.body--dark {
+html.cast-root--transparent,
+body.cast-root--transparent,
+.cast-surface--transparent {
   background: transparent !important;
 }
 
-body.body--light .layout {
-  background: var(--bm-ground);
-}
-
-body.body--dark .layout {
+body.cast-root--opaque,
+.cast-surface--opaque {
   background: var(--bm-ground) !important;
 }
 
-.layout:focus {
+.cast-window--focused {
   box-shadow: inset 0 0 0 1px var(--bm-line-strong);
+}
+
+/* Quasar's side sections use their own muted colour. Tie it explicitly to the
+   active cast palette so a theme switch cannot leave values in the old mode. */
+.q-layout .q-item__section--side:not(.q-item__section--avatar) {
+  color: var(--bm-dim);
 }
 
 /* ---------------------------------------------------------------------------

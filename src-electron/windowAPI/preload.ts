@@ -9,6 +9,7 @@ const api: WindowAPI = {
   unpin: () => ipcRenderer.send('window:unpin'),
   mute: () => ipcRenderer.send('window:mute'),
   unmute: () => ipcRenderer.send('window:unmute'),
+  invalidate: () => ipcRenderer.send('window:invalidate'),
   openDevTools: () => ipcRenderer.send('window:open-dev-tools'),
 };
 

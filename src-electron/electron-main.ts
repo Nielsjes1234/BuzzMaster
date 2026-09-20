@@ -119,6 +119,9 @@ async function createCastWindow() {
     useContentSize: true,
     frame: false,
     transparent: true,
+    // Keep the native surface transparent. Opaque cast mode is painted by the
+    // renderer, so light and dark mode can both switch to an overlay later.
+    backgroundColor: '#00000000',
     webPreferences: {
       sandbox: true,
       contextIsolation: true,
