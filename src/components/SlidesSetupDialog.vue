@@ -88,9 +88,7 @@
                   ? t('slides.action.exitFullscreen')
                   : t('slides.action.fullscreen')
               "
-              :icon="
-                slidesStore.fullscreen ? 'fullscreen_exit' : 'fullscreen'
-              "
+              :icon="slidesStore.fullscreen ? 'fullscreen_exit' : 'fullscreen'"
               color="primary"
               :outline="!slidesStore.fullscreen"
               round

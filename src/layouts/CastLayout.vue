@@ -166,10 +166,6 @@ function setTransparent() {
 </script>
 
 <style>
-* {
-  font-family: var(--bm-font-ui);
-}
-
 body.body--dark {
   background: transparent !important;
 }
@@ -281,5 +277,4 @@ body.body--dark .layout {
     transform: none;
   }
 }
-
 </style>

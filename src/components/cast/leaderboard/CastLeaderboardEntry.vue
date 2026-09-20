@@ -46,13 +46,27 @@ const props = defineProps<{
 
 /* Rows land one after another rather than all at once, which reads as a board
    being filled in instead of a page appearing. */
-.bm-lb-row:nth-child(1) { animation-delay: 0ms; }
-.bm-lb-row:nth-child(2) { animation-delay: 60ms; }
-.bm-lb-row:nth-child(3) { animation-delay: 120ms; }
-.bm-lb-row:nth-child(4) { animation-delay: 180ms; }
-.bm-lb-row:nth-child(5) { animation-delay: 240ms; }
-.bm-lb-row:nth-child(6) { animation-delay: 300ms; }
-.bm-lb-row:nth-child(n + 7) { animation-delay: 360ms; }
+.bm-lb-row:nth-child(1) {
+  animation-delay: 0ms;
+}
+.bm-lb-row:nth-child(2) {
+  animation-delay: 60ms;
+}
+.bm-lb-row:nth-child(3) {
+  animation-delay: 120ms;
+}
+.bm-lb-row:nth-child(4) {
+  animation-delay: 180ms;
+}
+.bm-lb-row:nth-child(5) {
+  animation-delay: 240ms;
+}
+.bm-lb-row:nth-child(6) {
+  animation-delay: 300ms;
+}
+.bm-lb-row:nth-child(n + 7) {
+  animation-delay: 360ms;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .bm-lb-row {

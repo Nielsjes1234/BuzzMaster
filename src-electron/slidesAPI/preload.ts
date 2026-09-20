@@ -8,7 +8,8 @@ import type {
 const api: SlidesAPI = {
   open: (url: string) =>
     ipcRenderer.invoke('slides:open', url) as Promise<SlidesOpenResult>,
-  reopen: () => ipcRenderer.invoke('slides:reopen') as Promise<SlidesOpenResult>,
+  reopen: () =>
+    ipcRenderer.invoke('slides:reopen') as Promise<SlidesOpenResult>,
   close: () => ipcRenderer.send('slides:close'),
 
   next: () => ipcRenderer.send('slides:next'),

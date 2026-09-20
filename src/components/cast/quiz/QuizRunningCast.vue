@@ -68,7 +68,9 @@ const props = defineProps<{
 /** Without an answer time the round runs until the host stops it. */
 const hasDeadline = computed<boolean>(() => settings.value.answerTime > 0);
 
-const secondsLeft = computed<number>(() => Math.max(0, Math.ceil(props.state.time)));
+const secondsLeft = computed<number>(() =>
+  Math.max(0, Math.ceil(props.state.time)),
+);
 
 /** 1 at the start of the round, 0 when the time is up. */
 const remaining = computed<number>(() => {
