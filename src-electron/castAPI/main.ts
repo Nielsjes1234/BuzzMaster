@@ -21,6 +21,7 @@ export default (
   ipcMain.on('cast:updateGameSettings', forwardTo('onGameSettingsUpdate'));
   ipcMain.on('cast:updateLocale', forwardTo('onLocaleUpdate'));
   ipcMain.on('cast:updateControllers', forwardTo('onControllerUpdate'));
+  ipcMain.on('cast:updateLeaderboard', forwardTo('onLeaderboardUpdate'));
 
   let castWindow: BrowserWindow;
   // The window controlling the cast window, notified whenever it opens or closes

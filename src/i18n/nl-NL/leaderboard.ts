@@ -3,6 +3,7 @@ export default {
   noEntries: 'Geen actieve buzzer beschikbaar!',
   action: {
     reset: 'Reset',
+    undo: 'Ongedaan maken',
     ok: 'Ok',
   },
   update: {

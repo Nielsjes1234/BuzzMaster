@@ -20,7 +20,9 @@ export default {
     },
   },
 
-  running: {},
+  running: {
+    title: 'Votación',
+  },
 
   completed: {
     points: 'Puntos',

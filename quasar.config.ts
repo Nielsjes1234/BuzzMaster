@@ -26,7 +26,7 @@ export default defineConfig((ctx) => {
     boot: ['i18n', 'buzzer'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
-    css: ['app.scss'],
+    css: ['tokens.scss', 'app.scss'],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
@@ -219,6 +219,17 @@ export default defineConfig((ctx) => {
         // https://www.electron.build/configuration/configuration
 
         appId: 'buzzmaster',
+
+        // Where electron-updater looks for new releases. Stated explicitly
+        // rather than inferred from package.json, so the update target cannot
+        // drift when the repository field changes.
+        publish: [
+          {
+            provider: 'github',
+            owner: 'Nielsjes1234',
+            repo: 'BuzzMaster',
+          },
+        ],
       },
     },
 

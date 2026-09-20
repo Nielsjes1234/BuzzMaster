@@ -18,7 +18,9 @@ export default {
       },
     },
   },
-  running: {},
+  running: {
+    title: 'Stemmen',
+  },
   completed: {
     points: 'Punten',
     fastestBonus: 'Snelheidsbonus',

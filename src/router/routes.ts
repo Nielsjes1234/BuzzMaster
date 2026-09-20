@@ -40,6 +40,14 @@ const routes: RouteRecordRaw[] = [
         name: 'cast-pong',
         component: () => import('@/pages/cast/PongCastPage.vue'),
       },
+      {
+        // The cast store routes by the state's `game` field, and this mode
+        // calls itself 'viewing-rates' — plural, and hyphenated. The name has
+        // to match it exactly or the window falls back to the standby screen.
+        path: 'viewing-rates',
+        name: 'cast-viewing-rates',
+        component: () => import('@/pages/cast/ViewingRateCastPage.vue'),
+      },
     ],
   },
   {

@@ -1,25 +1,32 @@
 // Quasar SCSS (& Sass) Variables
 // --------------------------------------------------
-// To customize the look and feel of this app, you can override
-// the Sass/SCSS variables found in Quasar's source Sass/SCSS files.
+// These are compiled once and cannot differ between light and dark, so they
+// hold the light palette. The runtime theme — including the dark variants —
+// lives in `tokens.scss` as CSS custom properties, which override these.
+//
+// Change a colour in tokens.scss, and mirror it here for the light theme.
 
-// Check documentation for full list of Quasar variables
+$primary: #5a46e8;
+$secondary: #5c6b84;
+$accent: #0e9ba8;
 
-// Your own variables (that are declared here) and Quasar's own
-// ones will be available out of the box in your .vue/.scss/.sass files
+$dark: #171a20;
+$dark-page: #0e1014;
 
-// It's highly recommended to change the default colors
-// to match your app's branding.
-// Tip: Use the "Theme Builder" on Quasar's documentation website.
+$positive: #1b9e58;
+$negative: #d62b43;
+$info: #2e7fd4;
+$warning: #c87a0a;
 
-$primary: #1976d2;
-$secondary: #26a69a;
-$accent: #9c27b0;
+// Typography ------------------------------------------------------------------
+// Quasar's own type styles pick these up, so the framework's components match
+// the rest of the app without each one being overridden by hand.
 
-$dark: #1d1d1d;
-$dark-page: #121212;
+$typography-font-family:
+  'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-$positive: #21ba45;
-$negative: #c10015;
-$info: #31ccec;
-$warning: #f2c037;
+// Shape -----------------------------------------------------------------------
+
+$generic-border-radius: 10px;
+$button-border-radius: 10px;
+$card-border-radius: 14px;

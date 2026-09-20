@@ -1,22 +1,29 @@
 <template>
-  <div class="row justify-center q-gutter-sm">
+  <div class="row justify-center q-gutter-md">
     <q-btn
       v-for="button in quizSettings.activeButtons"
       :key="button"
       :color="buzzerButtonColor[button]"
-      size="sm"
       round
-      style="border-width: 20px"
-      :outline="!correctAnswers.has(button)"
+      unelevated
+      class="quiz-answer"
+      :class="{ 'quiz-answer--on': correctAnswers.has(button) }"
+      :aria-pressed="correctAnswers.has(button)"
       @click="updateButtonPoints(button)"
-    />
+    >
+      <q-icon
+        v-if="correctAnswers.has(button)"
+        name="check"
+        class="quiz-answer__check"
+      />
+    </q-btn>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { buzzerButtonColor } from '@/components/buttonColors';
 import type { BuzzerButton } from '@/plugins/buzzer/types';
-import { onBeforeMount, onUnmounted, ref } from 'vue';
+import { onBeforeMount, onUnmounted, ref, watch } from 'vue';
 import { useLeaderboardStore } from '@/stores/leaderboard-store';
 import { useGameSettingsStore } from '@/stores/game-settings-store';
 import { useAudio } from '@/composables/audio';
@@ -58,10 +65,34 @@ function onRemoteAction(e: CustomEvent) {
   }
 }
 
+/*
+ * The host undid the award this component made. Those points are already off
+ * the board, so the refund record above now describes money that no longer
+ * exists; keeping it would subtract it a second time on the next toggle. The
+ * selection goes with it, because a colour still ringed as correct while its
+ * points are gone is a screen that contradicts the scoreboard.
+ *
+ * Undoing anything else — a manual correction, a reset — restores a board on
+ * which this record is still true, so it is left alone.
+ */
+watch(
+  () => leaderboardStore.undoCount,
+  () => {
+    if (leaderboardStore.undoneOrigin !== 'quiz') {
+      return;
+    }
+
+    grantedPoints.value = {};
+    correctAnswers.value = new Set();
+    audioPlayed = false;
+    emit('update', undefined);
+  },
+);
+
 const updateButtonPoints = async (button: BuzzerButton): Promise<void> => {
   // Revert the points of the previous selection
   Object.entries(grantedPoints.value).forEach(([controllerId, points]) => {
-    leaderboardStore.addPoints(controllerId, -points);
+    leaderboardStore.addPoints(controllerId, -points, 'quiz');
   });
 
   // Toggle the button
@@ -95,7 +126,7 @@ const updateButtonPoints = async (button: BuzzerButton): Promise<void> => {
   }
 
   Object.entries(points).forEach(([controllerId, value]) => {
-    leaderboardStore.addPoints(controllerId, value);
+    leaderboardStore.addPoints(controllerId, value, 'quiz');
   });
 
   grantedPoints.value = points;
@@ -116,4 +147,40 @@ const playAudio = async () => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+/*
+ * These were outlined rings until the colours moved to tokens, and outlines
+ * turned out to be the wrong shape for the job: a thin circle of colour is
+ * hard to identify at a glance and nearly invisible on a light background.
+ * The answer is a solid swatch throughout, with the unselected ones dimmed,
+ * so the button always reads as the colour it represents.
+ */
+.quiz-answer {
+  width: 56px;
+  height: 56px;
+  opacity: 0.38;
+  transform: scale(0.92);
+  transition:
+    opacity var(--bm-duration) var(--bm-ease),
+    transform var(--bm-duration) var(--bm-ease),
+    box-shadow var(--bm-duration) var(--bm-ease);
+}
+
+.quiz-answer--on {
+  opacity: 1;
+  transform: scale(1);
+  box-shadow:
+    0 0 0 3px var(--bm-ground),
+    0 0 0 5px var(--bm-ink);
+}
+
+.quiz-answer__check {
+  font-size: 28px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quiz-answer {
+    transition: none;
+  }
+}
+</style>

@@ -47,6 +47,15 @@
 
       <q-card-actions align="center">
         <q-btn
+          :label="t('leaderboard.action.undo')"
+          icon="undo"
+          color="primary"
+          rounded
+          flat
+          :disable="!leaderboardStore.canUndo"
+          @click="leaderboardStore.undo()"
+        />
+        <q-btn
           :label="t('leaderboard.action.reset')"
           color="primary"
           rounded

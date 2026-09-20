@@ -4,6 +4,7 @@ import { ref } from 'vue';
 import type { GameState } from '@/../common/gameState';
 import { useRouter } from 'vue-router';
 import type { GameSettings } from '@/../common/gameSettings';
+import type { LeaderboardEntry } from '@/../common/gameState/LeaderboardState';
 
 export const useCastStore = defineStore('cast', () => {
   const { locale } = useI18n();
@@ -43,6 +44,16 @@ export const useCastStore = defineStore('cast', () => {
     controllers.value = value;
   }
 
+  /*
+   * The standings arrive on their own channel rather than inside `gameState`,
+   * so they stay available between rounds instead of only while the host is
+   * looking at the leaderboard page.
+   */
+  const leaderboard = ref<LeaderboardEntry[]>([]);
+  function updateLeaderboard(value: LeaderboardEntry[]) {
+    leaderboard.value = value;
+  }
+
   function updateLocale(value: string) {
     locale.value = value;
   }
@@ -51,11 +62,13 @@ export const useCastStore = defineStore('cast', () => {
     controllers,
     gameState,
     gameSettings,
+    leaderboard,
 
     updateGameState,
     updateGameSettings,
     updateLocale,
     updateControllers,
+    updateLeaderboard,
   };
 });
 

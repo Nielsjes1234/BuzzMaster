@@ -63,12 +63,15 @@ const colorClass = computed<string>(() => {
   return buzzerButtonBgColor[props.button];
 });
 
+// Shared with every other place a buzzer colour appears; see
+// src/css/tokens.scss. Red stands for "did not answer" in the results, which
+// is why it maps to the neutral rather than to the red button's own colour.
 const buzzerButtonBgColor = {
-  [BuzzerButton.BLUE]: 'bg-blue',
-  [BuzzerButton.ORANGE]: 'bg-orange',
-  [BuzzerButton.GREEN]: 'bg-green',
-  [BuzzerButton.YELLOW]: 'bg-yellow',
-  [BuzzerButton.RED]: 'bg-grey',
+  [BuzzerButton.BLUE]: 'bg-buzz-blue',
+  [BuzzerButton.ORANGE]: 'bg-buzz-orange',
+  [BuzzerButton.GREEN]: 'bg-buzz-green',
+  [BuzzerButton.YELLOW]: 'bg-buzz-yellow',
+  [BuzzerButton.RED]: 'bg-buzz-none',
 };
 </script>
 
@@ -82,7 +85,7 @@ const buzzerButtonBgColor = {
 .bar .inner {
   width: 100%;
   height: 100%;
-  border-radius: 5px;
+  border-radius: var(--bm-radius-xs) var(--bm-radius-xs) 2px 2px;
   animation-name: growBar;
   animation-timing-function: linear;
   position: absolute;
@@ -93,6 +96,9 @@ const buzzerButtonBgColor = {
   opacity: 1;
   animation-name: fadeIn;
   animation-timing-function: linear;
+  font-family: var(--bm-font-display);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 @keyframes growBar {
